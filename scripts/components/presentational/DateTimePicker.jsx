@@ -99,16 +99,6 @@ const TimePicker = React.createClass({
 
 const DatePicker = React.createClass({
 
-    getInitialState: function() {
-        const {timestamp} = this.props
-        var m = _moment(timestamp);
-
-        return {
-            year: m.year(),
-            month: m.month(),
-        }
-    },
-
     onChange: function(year, month, week, day) {
 
         const {timestamp} = this.props;
@@ -119,54 +109,31 @@ const DatePicker = React.createClass({
         m.week(week)
         m.day(day)
 
-        if(this.state.month !== month || this.state.year !== year) {
-            this.setState({
-                month: month,
-                year: year,
-            })
-        }
-
         this.props.onChange(m.valueOf())
     },
 
     onPrevMonth: function() {
-        const {year, month} = this.state;
-        const m = _moment(1);
-        m.year(year)
-        m.month(month)
+        var m = _moment(this.props.timestamp);
         m.subtract(1, "month");
-
-        this.setState({
-            year: m.year(),
-            month: m.month(),
-        })
+        this.props.onChange(m.valueOf())
     },
 
     onNextMonth: function() {
-        const {year, month} = this.state;
-        const m = _moment(1);
-        m.year(year)
-        m.month(month)
+        var m = _moment(this.props.timestamp);
         m.add(1, "month");
-
-        this.setState({
-            year: m.year(),
-            month: m.month(),
-        })
+        this.props.onChange(m.valueOf())
     },
 
     render: function() {
         const {timestamp} = this.props
-        const {year, month} = this.state;
 
         const days = [0,1,2,3,4,5,6]
         const weeks = [0,1,2,3,4,5]
 
         var now = _moment(timestamp);
-        var showing = _moment(1);
+        const month = now.month()
 
-        showing.year(year)
-        showing.month(month)
+        var showing = _moment(now.valueOf());
         showing.date(1)
 
         var mStart = _moment(showing.valueOf());
