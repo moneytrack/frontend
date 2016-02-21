@@ -36,7 +36,7 @@ var gulp = require('gulp'),
     babelPresetEs2015 = require('babel-preset-es2015'),
     babelPresetReact = require('babel-preset-react'),
     serve = require('gulp-serve'),
-    envify = require('loose-envify'),
+    envify = require('gulp-envify'),
 
     packageJson = require('./package.json');
 
@@ -73,13 +73,12 @@ gulp.task('scripts_vendor', function(){
         presets: [babelPresetReact, babelPresetEs2015]
     })
 
-    bundler = bundler.transform(envify, {
-        NODE_ENV: 'development'
-    })
 
     return bundler.bundle()
         .on('error',  onError)
         .pipe(source('vendor.js'))
+        .on('error', onError)
+        .pipe(streamify(envify({NODE_ENV: 'production'})))
         .on('error', onError)
         .pipe(streamify(uglify()))
         .on('error', onError)
@@ -117,13 +116,11 @@ gulp.task('scripts', function(){
         presets: [babelPresetReact, babelPresetEs2015]
     })
 
-    bundler = bundler.transform(envify, {
-        NODE_ENV: 'development'
-    })
-
     return bundler.bundle()
         .on('error',  onError)
         .pipe(source('app.js'))
+        .on('error', onError)
+        .pipe(streamify(envify({NODE_ENV: 'production'})))
         .on('error', onError)
         .pipe(streamify(uglify()))
         .on('error', onError)
