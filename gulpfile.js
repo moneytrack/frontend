@@ -34,7 +34,8 @@ var gulp = require('gulp'),
     fs = require('fs'),
     babelify = require('babelify'),
     babelPresetEs2015 = require('babel-preset-es2015'),
-    babelPresetReact = require('babel-preset-react')
+    babelPresetReact = require('babel-preset-react'),
+    serve = require('gulp-serve')
 
     packageJson = require('./package.json');
 
@@ -42,7 +43,8 @@ var gulp = require('gulp'),
 var DEBUG_ROOT = './debug';
 var SRC_ROOT = '.';
 var PROD_ROOT = './moneytrack.github.io';
-
+var DEBUG_HOSTNAME = "localhost";
+var DEBUG_PORT = 8082;
 
 
 gulp.task('static', function(){
@@ -268,4 +270,11 @@ gulp.task('debug_styles', ['__debug_styles'], function(){
     var files = SRC_ROOT + '/styles/**.scss';
     return gulp.watch(files, ['__debug_styles'])
 });
-gulp.task('debug', ['debug_static', 'debug_styles', 'debug_scripts_vendor', 'debug_scripts', 'debug_scripts_context']);
+
+gulp.task('debug_serve', serve({
+    root:DEBUG_ROOT,
+    hostname: DEBUG_HOSTNAME,
+    port:DEBUG_PORT,
+}))
+
+gulp.task('debug', ['debug_static', 'debug_styles', 'debug_scripts_vendor', 'debug_scripts', 'debug_scripts_context', 'debug_serve']);
