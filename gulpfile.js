@@ -43,7 +43,7 @@ var gulp = require('gulp'),
 var DEBUG_ROOT = './debug';
 var SRC_ROOT = '.';
 var PROD_ROOT = './moneytrack.github.io';
-var DEBUG_HOSTNAME = "localhost";
+var DEBUG_HOSTNAME = "192.168.1.185";
 var DEBUG_PORT = 8082;
 
 
