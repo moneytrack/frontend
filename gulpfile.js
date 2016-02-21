@@ -41,7 +41,7 @@ var gulp = require('gulp'),
 
 var DEBUG_ROOT = './debug';
 var SRC_ROOT = '.';
-var PROD_ROOT = '..';
+var PROD_ROOT = './moneytrack.github.io';
 
 
 
