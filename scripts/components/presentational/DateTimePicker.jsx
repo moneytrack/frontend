@@ -1,6 +1,5 @@
 "use strict"
 import React from 'react'
-import update from 'react-addons-update'
 import InputMoment from 'input-moment'
 import _moment from 'moment'
 
@@ -121,10 +120,10 @@ const DatePicker = React.createClass({
         m.day(day)
 
         if(this.state.month !== month || this.state.year !== year) {
-            this.setState(update(this.state, {
-                month: {$set: month},
-                year: {$set: year}
-            }))
+            this.setState({
+                month: month,
+                year: year,
+            })
         }
 
         this.props.onChange(m.valueOf())
@@ -137,10 +136,10 @@ const DatePicker = React.createClass({
         m.month(month)
         m.subtract(1, "month");
 
-        this.setState(update(this.state, {
-            year: {$set: m.year()},
-            month: {$set: m.month()},
-        }))
+        this.setState({
+            year: m.year(),
+            month: m.month(),
+        })
     },
 
     onNextMonth: function() {
@@ -150,10 +149,10 @@ const DatePicker = React.createClass({
         m.month(month)
         m.add(1, "month");
 
-        this.setState(update(this.state, {
-            year: {$set: m.year()},
-            month: {$set: m.month()},
-        }))
+        this.setState({
+            year: m.year(),
+            month: m.month(),
+        })
     },
 
     render: function() {
@@ -239,32 +238,38 @@ const DateTimePicker = React.createClass({
     },
 
     onChange: function(timestamp) {
-        this.setState(update(this.state, {
-            timestamp: {$set: timestamp}
-        }))
-    },
-
-    onCancel: function() {
-        this.setState(update(this.state, {
-            visible: {$set: false}
-        }))
+        console.log("new timestamp", timestamp);
+        this.setState( {
+            timestamp: timestamp
+        })
     },
 
     onClick: function(e) {
         e.preventDefault();
-        this.setState(update(this.state, {
-            visible: {$set: !this.state.visible}
-        }))
+        this.setState({
+            visible: !this.state.visible,
+            timestamp: this.props.timestamp,
+        })
     },
 
     onSave: function() {
+        this.setState({
+            visible: false,
+            timestamp: this.props.timestamp,
+        })
         this.props.onChange(this.state.timestamp)
-        this.setState(update(this.state, {
-            visible: {$set: false}
-        }))
+    },
+
+    onCancel: function() {
+        this.setState({
+            visible: false,
+        })
     },
 
     render: function () {
+
+        console.log("Render DateTimePicker");
+
         const {timestamp} = this.props
         return (
             <div className="date-time-picker">
