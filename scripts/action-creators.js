@@ -93,3 +93,12 @@ export const setCurrency = ({currency}) => {
 		}
 	})
 }
+
+export const setFirstDayOfWeek = ({firstDayOfWeek}) => {
+	return asyncDispatch((result) => {
+		return {
+			type: 'SET_FIRST_DAY_OF_WEEK',
+			firstDayOfWeek
+		}
+	})
+}

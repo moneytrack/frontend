@@ -2,7 +2,7 @@
 import React from 'react'
 import update from 'react-addons-update'
 
-import {setCurrency} from '../../action-creators'
+import {setCurrency, setFirstDayOfWeek} from '../../action-creators'
 
 const UserSettings = React.createClass({
 
@@ -10,8 +10,12 @@ const UserSettings = React.createClass({
         this.context.store.dispatch(setCurrency({currency:e.target.value}))
     },
 
+    onChangeFirstDayOfWeek: function(e) {
+        this.context.store.dispatch(setFirstDayOfWeek({firstDayOfWeek:e.target.value}))
+    },
+
     render: function () {
-        const {currency} = this.context.store.getState().userSettings
+        const {currency, firstDayOfWeek} = this.context.store.getState().userSettings
         return (
             <table>
                 <tbody>
@@ -24,6 +28,17 @@ const UserSettings = React.createClass({
                                 <option value="USD">U.S. dollars</option>
                                 <option value="EUR">Euro</option>
                                 <option value="RUR">Russian rubles</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>First day of week:</label>
+                        </td>
+                        <td>
+                            <select value={firstDayOfWeek} onChange={this.onChangeFirstDayOfWeek}>
+                                <option value="SUNDAY">Sunday</option>
+                                <option value="MONDAY">Monday</option>
                             </select>
                         </td>
                     </tr>

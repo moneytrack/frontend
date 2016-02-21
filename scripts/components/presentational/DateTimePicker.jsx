@@ -152,7 +152,7 @@ const DatePicker = React.createClass({
                         <tr>
                             {
                                 days.map(day => (
-                                    <td key={"header_day_" + day} className="date-picker__calendar__header date-picker__calendar__cell">{_moment(start).day(day).format("ddd")}</td>
+                                    <td key={"header_day_" + day} className="date-picker__calendar__header date-picker__calendar__cell">{_moment(start).startOf('isoweek').day(day).format("ddd")}</td>
                                 ))
                             }
                         </tr>
@@ -164,7 +164,7 @@ const DatePicker = React.createClass({
                                 <tr key={"week_" + week}>
                                     {
                                         days.map(day => {
-                                            var date = _moment(start).add(week, 'weeks').add(day, 'days');
+                                            var date = _moment(start).startOf('isoweek').add(week, 'weeks').add(day, 'days');
                                             var className = "date-picker__calendar__cell"
                                             if((date.week() === now.week() && date.day() == now.day() && date.year() === now.year() && date.month() === now.month())) {
                                                 className += " date-picker__calendar__cell--active"
@@ -205,7 +205,6 @@ const DateTimePicker = React.createClass({
     },
 
     onChange: function(timestamp) {
-        console.log("new timestamp", timestamp);
         this.setState( {
             timestamp: timestamp
         })
@@ -234,8 +233,6 @@ const DateTimePicker = React.createClass({
     },
 
     render: function () {
-
-        console.log("Render DateTimePicker");
 
         const {timestamp} = this.props
         return (

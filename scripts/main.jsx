@@ -247,6 +247,16 @@ ajax.get(DISPATCH_URL)
                     }
                 })
             }
+                break;
+
+            case 'SET_FIRST_DAY_OF_WEEK': {
+                const {firstDayOfWeek} = action
+                return update(state, {
+                    userSettings: {
+                        firstDayOfWeek: {$set: firstDayOfWeek}
+                    }
+                })
+            }
             break;
 
             default:
