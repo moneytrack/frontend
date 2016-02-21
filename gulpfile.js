@@ -35,7 +35,8 @@ var gulp = require('gulp'),
     babelify = require('babelify'),
     babelPresetEs2015 = require('babel-preset-es2015'),
     babelPresetReact = require('babel-preset-react'),
-    serve = require('gulp-serve')
+    serve = require('gulp-serve'),
+    envify = require('loose-envify'),
 
     packageJson = require('./package.json');
 
@@ -70,6 +71,10 @@ gulp.task('scripts_vendor', function(){
     bundler = bundler.transform(babelify, {
         global: true,
         presets: [babelPresetReact, babelPresetEs2015]
+    })
+
+    bundler = bundler.transform(envify, {
+        NODE_ENV: 'development'
     })
 
     return bundler.bundle()
@@ -110,6 +115,10 @@ gulp.task('scripts', function(){
     bundler = bundler.transform(babelify, {
         global: true,
         presets: [babelPresetReact, babelPresetEs2015]
+    })
+
+    bundler = bundler.transform(envify, {
+        NODE_ENV: 'development'
     })
 
     return bundler.bundle()
