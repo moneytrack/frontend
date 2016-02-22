@@ -211,58 +211,65 @@ gulp.task('debug_scripts_context', function(){
 });
 
 gulp.task('debug_scripts', function(){
-    var bundler = browserify(SRC_ROOT + '/scripts/main.jsx', {
-        debug: true,
-        cache: {},
-        packageCache: {},
-        fullPaths: true,
-        extensions: [".js", ".jsx"]
-    });
+    function makeBundle(entryPoint, output) {
+        console.log("Make bundle", entryPoint, output);
 
-    // Register all dependencies as external (they are loaded via vendor bundle)
-    Object.keys(packageJson.dependencies).forEach(function(dep){
-        bundler.external(dep)
-    })
-
-    bundler = bundler.transform(babelify, {
-        presets: [babelPresetReact, babelPresetEs2015]
-    })
-    bundler = watchify(bundler);
-
-    function onError(err) {
-        anybar('red');
-        gutil.log(gutil.colors.red(err.message));
-        var notifier = require('node-notifier');
-        notifier.notify({
-          'title': 'ERROR',
-          'message': err.message
+        var bundler = browserify(SRC_ROOT + entryPoint, {
+            debug: true,
+            cache: {},
+            packageCache: {},
+            fullPaths: true,
+            extensions: [".js", ".jsx"]
         });
+
+        // Register all dependencies as external (they are loaded via vendor bundle)
+        Object.keys(packageJson.dependencies).forEach(function(dep){
+            bundler.external(dep)
+        })
+
+        bundler = bundler.transform(babelify, {
+            presets: [babelPresetReact, babelPresetEs2015]
+        })
+        bundler = watchify(bundler);
+
+        function onError(err) {
+            anybar('red');
+            gutil.log(gutil.colors.red(err.message));
+            var notifier = require('node-notifier');
+            notifier.notify({
+                'title': 'ERROR',
+                'message': err.message
+            });
+        }
+
+        function rebundle() {
+            anybar('yellow');
+            var bundle = bundler.bundle()
+                .on('error',  onError)
+                .pipe(source(output))
+                .on('error', onError)
+                .pipe(gulp.dest(DEBUG_ROOT + '/scripts'))
+                .on('error', onError)
+                .on('end', function(){
+                    anybar('green');
+                })
+            return bundle
+        }
+
+        bundler.on('update', function() {
+            var start = Date.now();
+            gutil.log('Rebundle "' + output + '"...');
+            var bundle = rebundle();
+            bundle.on('end', function(){
+                gutil.log("Done! Time: " + (Date.now() - start));
+            });
+        });
+
+        return rebundle();
     }
 
-    function rebundle() {
-        anybar('yellow');
-        var bundle = bundler.bundle()
-            .on('error',  onError)
-            .pipe(source('app.js'))
-            .on('error', onError)
-            .pipe(gulp.dest(DEBUG_ROOT + '/scripts'))
-            .on('error', onError)
-            .on('end', function(){
-                anybar('green');
-            })
-        return bundle
-    }
-
-    bundler.on('update', function() {
-        var start = Date.now();
-        gutil.log('Rebundle app...');
-        var bundle = rebundle();
-        bundle.on('end', function(){
-            gutil.log("Done! Time: " + (Date.now() - start));
-        });
-    });
-
-    return rebundle();
+    makeBundle('/scripts/entry-point-desktop.jsx', 'desktop.js')
+    makeBundle('/scripts/entry-point-mobile.jsx', 'mobile.js')
 });
 
 gulp.task('__debug_styles', function(){
