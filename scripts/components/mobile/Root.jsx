@@ -5,15 +5,34 @@ import update from 'react-addons-update'
 
 
 import Keyboard from './Keyboard'
-import AmountInput from './AmountInput'
+import Header from './Header'
+import PseudoInput from './PseudoInput'
+import CategoryPicker from './CategoryPicker'
+import DateTimePicker from './DateTimePicker'
+
+function fixSafaryDelay(el) {
+    el.addEventListener("touchend", (e) => {
+        var event = new MouseEvent('click', {
+            'view': window,
+            'bubbles': true,
+            'cancelable': true
+        });
+        el.dispatchEvent(event)
+    })
+}
 
 const Root = React.createClass({
 
     render: function () {
+
         return (
             <div className="root">
-                <AmountInput/>
+                <PseudoInput value={41.99}/>
                 <Keyboard/>
+                <input  className="comment" ref={fixSafaryDelay}/>
+                <CategoryPicker />
+                <DateTimePicker />
+                <button className="add-button"  ref={fixSafaryDelay}>Add</button>
             </div>
         )
     }
