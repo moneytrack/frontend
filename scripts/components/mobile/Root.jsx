@@ -4,35 +4,33 @@ import moment from 'moment'
 import update from 'react-addons-update'
 
 
-import Keyboard from './Keyboard'
+import InputWithKeyboard from './InputWithKeyboard'
 import Header from './Header'
-import PseudoInput from './PseudoInput'
 import CategoryPicker from './CategoryPicker'
 import DateTimePicker from './DateTimePicker'
 
-function fixSafaryDelay(el) {
-    el.addEventListener("touchend", (e) => {
-        var event = new MouseEvent('click', {
-            'view': window,
-            'bubbles': true,
-            'cancelable': true
-        });
-        el.dispatchEvent(event)
-    })
-}
-
 const Root = React.createClass({
+
+    getInitialState: function() {
+        return {
+            amount: "0"
+        }
+    },
+
+    onAmountChange: function(amount) {
+        this.setState({amount})
+    },
 
     render: function () {
 
         return (
             <div className="root">
-                <PseudoInput value={41.99}/>
-                <Keyboard/>
-                <input  className="comment" ref={fixSafaryDelay}/>
+                <Header/>
+                <InputWithKeyboard  value={this.state.amount} onChange={this.onAmountChange}/>
+                <input  className="comment" />
                 <CategoryPicker />
                 <DateTimePicker />
-                <button className="add-button"  ref={fixSafaryDelay}>Add</button>
+                <button className="add-button" >Add</button>
             </div>
         )
     }
