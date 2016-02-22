@@ -102,6 +102,9 @@ const EditExpense = React.createClass({
     },
 
     render: function () {
+        const {userSettings} = this.context.store.getState();
+        const {firstDayOfWeek} = userSettings
+
         return (
             <form onSubmit={this.onSubmit} className="edit-expense">
                 <div className="edit-expense__row">
@@ -120,7 +123,8 @@ const EditExpense = React.createClass({
                             <td className="edit-expense__field__input">
                                 <DateTimePicker
                                     timestamp={this.state.date}
-                                    onChange={this.onChangeDate} />
+                                    onChange={this.onChangeDate}
+                                    firstDayOfWeek={firstDayOfWeek} />
                             </td>
                         </tr>
                         <tr>

@@ -125,26 +125,23 @@ const DatePicker = React.createClass({
     },
 
     render: function() {
-        const {timestamp} = this.props
+        const {timestamp, firstDayOfWeek = "SUNDAY"} = this.props
 
         const days = [0,1,2,3,4,5,6]
         const weeks = [0,1,2,3,4,5]
 
         var now = _moment(timestamp);
-        const month = now.month()
 
-        var showing = _moment(now.valueOf());
-        showing.date(1)
-
-        var mStart = _moment(showing.valueOf());
-        mStart.subtract(mStart.day(), 'days')
-        var start = mStart.valueOf();
+        var start = _moment(timestamp)
+            .date(1)
+            .startOf(firstDayOfWeek === "MONDAY" ? "isoweek" : "week")
+            .valueOf()
 
         return (
             <div className="date-picker">
 
                 <HSpinner onUp={this.onNextMonth} onDown={this.onPrevMonth}>
-                    <div className="date-picker__months__title">{showing.format("YYYY, MMMM")}</div>
+                    <div className="date-picker__months__title">{now.format("YYYY, MMMM")}</div>
                 </HSpinner>
 
                 <table className="date-picker__calendar">
@@ -152,7 +149,7 @@ const DatePicker = React.createClass({
                         <tr>
                             {
                                 days.map(day => (
-                                    <td key={"header_day_" + day} className="date-picker__calendar__header date-picker__calendar__cell">{_moment(start).startOf('isoweek').day(day).format("ddd")}</td>
+                                    <td key={"header_day_" + day} className="date-picker__calendar__header date-picker__calendar__cell">{_moment(start).add(day, 'days').format("ddd")}</td>
                                 ))
                             }
                         </tr>
@@ -164,12 +161,12 @@ const DatePicker = React.createClass({
                                 <tr key={"week_" + week}>
                                     {
                                         days.map(day => {
-                                            var date = _moment(start).startOf('isoweek').add(week, 'weeks').add(day, 'days');
+                                            var date = _moment(start).add(week, 'weeks').add(day, 'days');
                                             var className = "date-picker__calendar__cell"
                                             if((date.week() === now.week() && date.day() == now.day() && date.year() === now.year() && date.month() === now.month())) {
                                                 className += " date-picker__calendar__cell--active"
                                             }
-                                            if((date.month() !== month)) {
+                                            if((date.month() !== now.month())) {
                                                 className += " date-picker__calendar__cell--another-month"
                                             }
                                             return (
@@ -234,7 +231,7 @@ const DateTimePicker = React.createClass({
 
     render: function () {
 
-        const {timestamp} = this.props
+        const {timestamp, firstDayOfWeek = "SUNDAY"} = this.props
         return (
             <div className="date-time-picker">
                 <div className="pseudo-input-text" onClick={this.onClick} >
@@ -247,7 +244,7 @@ const DateTimePicker = React.createClass({
                                 <TimePicker timestamp={this.state.timestamp} onChange={this.onChange}/>
                             </div>
                             <div className="date-time-picker__modal-content__section">
-                                <DatePicker timestamp={this.state.timestamp} onChange={this.onChange}/>
+                                <DatePicker timestamp={this.state.timestamp} onChange={this.onChange} firstDayOfWeek={firstDayOfWeek}/>
                             </div>
                             <div className="date-time-picker__modal-content__section date-time-picker__modal-content__controls">
                                 <button type="button" onClick={this.onSave}>Save</button>
