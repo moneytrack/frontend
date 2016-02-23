@@ -9,28 +9,54 @@ import Header from './Header'
 import CategoryPicker from './CategoryPicker'
 import DateTimePicker from './DateTimePicker'
 
+
+
 const Root = React.createClass({
 
-    getInitialState: function() {
+    createState: function() {
+        const {rootCategoryId, categoryList} = this.context.store.getState()
+        let rootCategoryList = categoryList.sort((c1,c2) => c1.order - c2.order).filter(x => x.parentId === rootCategoryId)
+        let firstCategoryId = rootCategoryList.length > 0 ? rootCategoryList[0].id : -1;
+
         return {
-            amount: "0"
+            amount: "0",
+            date: moment(),
+            categoryId: firstCategoryId,
+            comment: ""
         }
     },
+
+    // todo: this code isn't good: user could remove first category
+    getInitialState: function() {
+        return this.createState()
+    },
+
+    componentDidMount: function() {
+        this.unsubscribe = this.context.store.subscribe(() => {
+            this.setState(this.createState(), () => {
+                this.forceUpdate()
+            })
+        })
+    },
+
 
     onAmountChange: function(amount) {
         this.setState({amount})
     },
 
-    render: function () {
+    onAdd: function() {
 
+    },
+
+    render: function () {
         return (
             <div className="root">
                 <Header/>
                 <InputWithKeyboard  value={this.state.amount} onChange={this.onAmountChange}/>
-                <input  className="comment" />
-                <CategoryPicker />
-                <DateTimePicker />
-                <button className="add-button" >Add</button>
+                <input className="comment" value={this.state.comment} />
+                <CategoryPicker value={this.state.categoryId}/>
+                <DateTimePicker value={this.state.date} />
+                <button className="add-button" onAdd={this.onAdd} >Add</button>
             </div>
         )
     }

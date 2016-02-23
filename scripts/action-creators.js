@@ -19,6 +19,19 @@ function asyncDispatch(cb) {
 	}
 }
 
+function syncDispatch(action) {
+    return dispatch => dispatch(action)
+}
+
+
+
+export const newState = ({newState}) => {
+    return syncDispatch({
+        type: 'NEW_STATE',
+        newState
+    })
+}
+
 export const newExpense = ({amount, categoryId, comment, date}) => {
 	return asyncDispatch((id) => {
     	return {

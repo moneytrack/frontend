@@ -32,6 +32,7 @@ import moment from 'moment'
 import ajax from './ajax'
 import Root from './components/mobile/Root.jsx'
 import {find} from './arrays'
+import {newState} from './action-creators'
 
 if(window.context.env === "PROD" && window.location.protocol === "http:") {
     window.location.href = window.location.href.replace(/^http/, "https")
@@ -39,247 +40,254 @@ if(window.context.env === "PROD" && window.location.protocol === "http:") {
 
 const DISPATCH_URL = window.context.backend_url + "/dispatch"
 
-ajax.get(DISPATCH_URL)
-.then((response) => {
-    return response
-}, (err) => {
-    console.error(err)
-    console.error("Failed to load state, use default state");
-    // if(err.code) {
-    //     window.location.replace("/auth");
-    // }
-    return Promise.resolve({
-        error: "UNAUTHORIZED"
-    });
-})
-.then((initState) => {
+function restoreState() {
+    var item = window.localStorage.getItem("reduxState");
+    if(item == null) {
+        return {
+            "history": [],
+            "rootCategoryId": null,
+            "categoryList": [],
+            "userSettings": {"currency": "USD", "firstDayOfWeek": "SUNDAY"}
+        }
+    }
+    else {
+        return JSON.parse(item)
+    }
+}
 
-    const reducer = (state = initState, action) => {
-        const {type, status} = action
-        switch(type) {
-            case 'WAIT': {
+function saveState(state) {
+    window.localStorage.setItem("reduxState", JSON.stringify(state))
+    return state;
+}
+
+const initState = restoreState()
+
+const reducer = (state = initState, action) => {
+    const {type, status} = action
+    switch(type) {
+        case 'NEW_STATE': {
+            return action.newState
+        }
+
+        case 'WAIT': {
+            return update(state, {
+                waiting: {$set:true},
+            })
+        }
+
+        case 'STOP_WAIT': {
+            return update(state, {waiting: {$set:false} })
+        }
+
+        case 'ERROR': {
+            return update(state, {error: {$set:true} })
+        }
+
+        case 'NEW_EXPENSE': {
+            const amount = parseFloat(action.amount)
+            const categoryId = parseInt(action.categoryId)
+            const comment = action.comment;
+            const id = action.id
+            const date = moment(action.date).valueOf()
+
+            const valid = !isNaN(amount) && state.categoryList.filter((x) => x.id === categoryId).length > 0;
+            if(valid) {
                 return update(state, {
-                    waiting: {$set:true},
+                    history: {$push: [{
+                        id,
+                        amount,
+                        categoryId,
+                        comment,
+                        date
+                    }]}
                 })
             }
+            else {
+                console.error("Invalid action", action)
+                return;
+            }
+            //todo: handle "failed" case
+        }
 
-            case 'STOP_WAIT': {
-                return update(state, {waiting: {$set:false} })
+        case 'EDIT_EXPENSE': {
+            const id = action.id
+            const amount = parseFloat(action.amount)
+            const categoryId = parseInt(action.categoryId)
+            const comment = action.comment;
+            const date = moment(action.date).valueOf()
+
+            let newHistory = state.history.map((expense) => {
+                if(expense.id === id) {
+                    return {id, amount, categoryId, comment, date}
+                }
+                else {
+                    return expense
+                }
+            })
+
+            return update(state, {
+                history: {$set: newHistory}
+            })
+            //todo: handle "failed" case
+        }
+
+
+        case 'DELETE_EXPENSE': {
+            return update(state, {
+                history: {$set: state.history.filter(expense => expense.id !== action.id)}
+            })
+            //todo: handle "failed" case
+        }
+
+        case 'NEW_CATEGORY': {
+            const id = parseFloat(action.id)
+            const title = action.title
+            const parentId = action.parentId
+
+            const newCategory = {
+                id,
+                title,
+                parentId,
+                childIdList: []
             }
 
-            case 'ERROR': {
-                return update(state, {error: {$set:true} })
-            }
-
-            case 'NEW_EXPENSE': {
-                const amount = parseFloat(action.amount)
-                const categoryId = parseInt(action.categoryId)
-                const comment = action.comment;
-                const id = action.id
-                const date = moment(action.date).valueOf()
-
-                const valid = !isNaN(amount) && state.categoryList.filter((x) => x.id === categoryId).length > 0;
-                if(valid) {
-                    return update(state, {
-                        history: {$push: [{
-                            id,
-                            amount,
-                            categoryId,
-                            comment,
-                            date
-                        }]}
+            let newCategoryList = state.categoryList.map(category => {
+                if(category.id === parentId) {
+                    return update(category, {
+                        childIdList: {$push: [id]}
                     })
                 }
                 else {
-                    console.error("Invalid action", action)
+                    return category;
                 }
-                //todo: handle "failed" case
-            }
-            break;
+            })
+            newCategoryList = newCategoryList.concat([newCategory])
 
-            case 'EDIT_EXPENSE': {
-                const id = action.id
-                const amount = parseFloat(action.amount)
-                const categoryId = parseInt(action.categoryId)
-                const comment = action.comment;
-                const date = moment(action.date).valueOf()
+            return update(state, {
+                categoryList: {$set: newCategoryList},
+            })
+            //todo: handle "failed" case
+        }
 
-                let newHistory = state.history.map((expense) => {
-                    if(expense.id === id) {
-                        return {id, amount, categoryId, comment, date}
+        case 'EDIT_CATEGORY': {
+            const id = parseFloat(action.id)
+            const title = action.title
+            const parentId = action.parentId
+
+            let newCategoryList = state.categoryList;
+
+            if(title !== null) {
+                newCategoryList = newCategoryList.map(category => {
+                    if(category.id === id) {
+                        return update(category, {
+                            title: {$set: title}
+                        })
                     }
                     else {
-                        return expense
+                        return category
                     }
                 })
-
-                return update(state, {
-                    history: {$set: newHistory}
-                })
-                //todo: handle "failed" case
             }
-            break;
-
-
-            case 'DELETE_EXPENSE': {
-                return update(state, {
-                    history: {$set: state.history.filter(expense => expense.id !== action.id)}
-                })
-                //todo: handle "failed" case
-            }
-            break;
-
-            case 'NEW_CATEGORY': {
-                const id = parseFloat(action.id)
-                const title = action.title
-                const parentId = action.parentId
-
-                const newCategory = {
-                    id,
-                    title,
-                    parentId,
-                    childIdList: []
+            if (parentId !== null) {
+                const category = state.categoryList.filter(x => x.id == id)[0]
+                const oldParentId = category.parentId;
+                if (oldParentId !== parentId) {
+                    newCategoryList = newCategoryList.map(category => {
+                        if (category.id === id) {
+                            return update(category, {
+                                parentId: {$set: parentId}
+                            })
+                        }
+                        if (category.id === oldParentId) {
+                            let newChildIdList = category.childIdList.filter(x => x !== id);
+                            return update(category, {
+                                childIdList: {$set: newChildIdList}
+                            })
+                        }
+                        else if (category.id === parentId) {
+                            let newChildIdList = category.childIdList.concat([id]);
+                            return update(category, {
+                                childIdList: {$set: newChildIdList}
+                            })
+                        }
+                        return category
+                    })
                 }
+            }
 
-                let newCategoryList = state.categoryList.map(category => {
+            return update(state, {
+                categoryList: {$set: newCategoryList}
+            })
+            //todo: handle "failed" case
+        }
+
+        case 'DELETE_CATEGORY': {
+            const id = action.id
+
+            const category = state.categoryList.filter(x => x.id == id)[0]
+            const parentId = category.parentId
+
+            let newCategoryList = state.categoryList
+                .filter(category => category.id !== id)
+                .map(category => {
                     if(category.id === parentId) {
                         return update(category, {
-                            childIdList: {$push: [id]}
+                            childIdList: {$set: category.childIdList.filter(x => x !== action.id)}
                         })
                     }
                     else {
                         return category;
                     }
                 })
-                newCategoryList = newCategoryList.concat([newCategory])
 
-                return update(state, {
-                    categoryList: {$set: newCategoryList},
-                })
-                //todo: handle "failed" case
-            }
-            break;
-
-            case 'EDIT_CATEGORY': {
-                const id = parseFloat(action.id)
-                const title = action.title
-                const parentId = action.parentId
-
-                let newCategoryList = state.categoryList;
-
-                if(title !== null) {
-                    newCategoryList = newCategoryList.map(category => {
-                        if(category.id === id) {
-                            return update(category, {
-                                title: {$set: title}
-                            })
-                        }
-                        else {
-                            return category
-                        }
-                    })
-                }
-                if (parentId !== null) {
-                    const category = state.categoryList.filter(x => x.id == id)[0]
-                    const oldParentId = category.parentId;
-                    if (oldParentId !== parentId) {
-                        newCategoryList = newCategoryList.map(category => {
-                            if (category.id === id) {
-                                return update(category, {
-                                    parentId: {$set: parentId}
-                                })
-                            }
-                            if (category.id === oldParentId) {
-                                let newChildIdList = category.childIdList.filter(x => x !== id);
-                                return update(category, {
-                                    childIdList: {$set: newChildIdList}
-                                })
-                            }
-                            else if (category.id === parentId) {
-                                let newChildIdList = category.childIdList.concat([id]);
-                                return update(category, {
-                                    childIdList: {$set: newChildIdList}
-                                })
-                            }
-                            return category
-                        })
-                    }
-                }
-
-
-                return update(state, {
-                    categoryList: {$set: newCategoryList}
-                })
-                //todo: handle "failed" case
-            }
-            break;
-
-            case 'DELETE_CATEGORY': {
-                const id = action.id
-
-                const category = state.categoryList.filter(x => x.id == id)[0]
-                const parentId = category.parentId
-
-                let newCategoryList = state.categoryList
-                    .filter(category => category.id !== id)
-                    .map(category => {
-                        if(category.id === parentId) {
-                            return update(category, {
-                                childIdList: {$set: category.childIdList.filter(x => x !== action.id)}
-                            })
-                        }
-                        else {
-                            return category;
-                        }
-                    })
-
-                return update(state, {
-                    categoryList: {$set: newCategoryList},
-                })
-                //todo: handle "failed" case
-            }
-            break;
-
-            case 'SET_CURRENCY': {
-                const {currency} = action
-                return update(state, {
-                    userSettings: {
-                        currency: {$set: currency}
-                    }
-                })
-            }
-                break;
-
-            case 'SET_FIRST_DAY_OF_WEEK': {
-                const {firstDayOfWeek} = action
-                return update(state, {
-                    userSettings: {
-                        firstDayOfWeek: {$set: firstDayOfWeek}
-                    }
-                })
-            }
-            break;
-
-            default:
-                console.warn("Unhandled action", action);
-                //todo: log
-            ;
+            return update(state, {
+                categoryList: {$set: newCategoryList},
+            })
+            //todo: handle "failed" case
         }
-        return state
+
+        case 'SET_CURRENCY': {
+            const {currency} = action
+            return update(state, {
+                userSettings: {
+                    currency: {$set: currency}
+                }
+            })
+        }
+
+        case 'SET_FIRST_DAY_OF_WEEK': {
+            const {firstDayOfWeek} = action
+            return update(state, {
+                userSettings: {
+                    firstDayOfWeek: {$set: firstDayOfWeek}
+                }
+            })
+        }
+
+        default:
+            console.warn("Unhandled action", action);
+            //todo: log
+            ;
     }
+    return state
+}
 
-    const store = applyMiddleware(thunkMiddleware, createLogger())(createStore)(reducer)
-    // const store = createStore(reducer)
+const reducerWithSave = (state, action) => saveState(reducer(state, action)) // todo: implement as middleware
 
-    ReactDOM.render(
-        <Provider store={store}>
-            <Root />
-        </Provider>,
-        document.getElementById("react")
-    )
+const store = applyMiddleware(thunkMiddleware, createLogger())(createStore)(reducerWithSave)
+
+ReactDOM.render(
+    <Provider store={store}>
+        <Root />
+    </Provider>,
+    document.getElementById("react")
+)
+
+// Try update initial state
+ajax.get(DISPATCH_URL).then((response) => {
+    store.dispatch(newState({newState:response}))
 }, (err) => {
     console.error(err)
+    console.error("Failed to load state, use default state");
 })
-.catch((err) => {
-    console.error(err)
-})
+

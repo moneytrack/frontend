@@ -9,7 +9,7 @@ const DateTimePicker = React.createClass({
 
         return (
             <div className="date-time-picker">
-                <button>22.02.2016</button>
+                <button>{moment(this.props.value).format("DD-MM-YYYY")}</button>
             </div>
         )
     }
