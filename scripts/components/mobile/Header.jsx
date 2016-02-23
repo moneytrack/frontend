@@ -6,9 +6,11 @@ import update from 'react-addons-update'
 const Header = React.createClass({
 
     render: function () {
+        const {queue} = this.context.store.getState();
         return (
             <div className="header">
                 <i className="icon fa fa-bars"></i>
+                <div>Queue: {queue.length}</div>
             </div>
         )
     }

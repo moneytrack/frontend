@@ -25,9 +25,9 @@ function syncDispatch(action) {
 
 
 
-export const newState = ({newState}) => {
+export const updateState = ({newState}) => {
     return syncDispatch({
-        type: 'NEW_STATE',
+        type: 'UPDATE_STATE',
         newState
     })
 }
@@ -114,4 +114,18 @@ export const setFirstDayOfWeek = ({firstDayOfWeek}) => {
 			firstDayOfWeek
 		}
 	})
+}
+
+export const enqueueNewExpense = ({amount, categoryId, comment, date}) => {
+    return syncDispatch({
+        type: 'ENQUEUE',
+        value: {
+            type: 'NEW_EXPENSE',
+            id: -1,
+            amount,
+            categoryId,
+            comment,
+            date
+        }
+    })
 }

@@ -85,11 +85,250 @@ button {
     }
 }
 
+.header {
+    display: flex;
+    font-size: 0.75rem;
+}
+
+
+
+
+
+
+
+
+$selectedBgColor: #EEEFAA;
+$linkColor: #006DCE;
+$warningColor: #C70000;
+$inputColor: #5F5F5F;
+$inputBgColor: #FBFBFB;
+$inputBorderColor: #E8E8E8;
+$inputDisabledColor: #5F5F5F;
+$inputWarningBorderColor: #8C0000;
+$inputWarningBgColor: #CA0000;
+$modalBgColor: rgba(0, 0, 0, 0.72);
+
+.arrow-up, .arrow-down, .arrow-right, .arrow-left {
+    width: 0;
+    height: 0;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent;
+}
+
+.arrow-up {
+    border-top: none;
+    border-bottom-color: black;
+}
+
+.arrow-down {
+    border-top-color: black;
+    border-bottom: none;
+}
+
+.arrow-right {
+    border-left-color: black;
+    border-right: none;
+}
+
+.arrow-left {
+    border-right-color: black;
+    border-left: none;
+}
+
+.modal-container {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: $modalBgColor;
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    flex-direction: column;
+    z-index: 9999;
+
+    &__column {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+
+        &__cell {
+            background: white;
+            border-radius: 4px;
+            padding: 0.5rem
+        }
+    }
+
+    &__msg {
+        margin: 1rem;
+    }
+
+    &__msg.warning {
+        color: $warningColor;
+    }
+
+    &__controls {
+        text-align: center;
+        margin: 1rem 0 0;
+    }
+}
+
+
 .date-time-picker {
+    .modal-container__column__cell {
+        padding: 0;
+    }
+    &__modal-content {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+
+        &__section {
+            border-bottom: 1px dashed #D6D6D6;
+            padding: 1rem;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+        }
+
+        &__section:last-child {
+            border-bottom: none;
+        }
+
+        &__controls {
+            padding: 0.2rem;
+        }
+    }
+
+    .pseudo-input-text {
+        cursor: pointer;
+    }
+
+
+}
+
+.date-picker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    &__months {
+        &__title {
+            font-weight: bold;
+            padding: 0 1rem;
+        }
+    }
+
+    &__calendar {
+        margin: 0.75rem 0;
+
+        &__header {
+            font-weight: bold;
+        }
+
+        &__cell {
+            text-align: center;
+            padding: 0.2rem 0.3rem;
+            cursor: default;
+            font-size: 0.75rem;
+
+            &--active {
+                background: $selectedBgColor;
+            }
+
+            &--another-month {
+                color: #CCCCCC;
+            }
+        }
+    }
+}
+
+.time-picker {
+    display: flex;
+    flex-direction: row;
+
+    &__input {
+        font-size: 2rem;
+        width: 40px;
+        text-align: center;
+        border: none;
+    }
+
+}
+
+
+.v-counter {
+
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    > button {
 
+    margin: 0.2rem;
+
+
+
+    &__middle {
+        border-left: 1px solid $inputBorderColor;
+        border-right: 1px solid $inputBorderColor;
+        display: flex;
+        justify-content: center;
+        flex-direction: row;
+    }
+
+
+    &__button {
+        display: flex;
+        justify-content: center;
+        margin: 0;
+        outline: none;
+
+        &--up {
+            border-radius: 5px 5px 0 0;
+        }
+
+        &--down {
+            border-radius: 0 0 5px 5px;
+        }
+    }
+}
+
+
+.h-counter {
+
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+
+    margin: 0.2rem;
+
+
+    &__middle {
+        border-bottom: 1px solid $inputBorderColor;
+        border-top: 1px solid $inputBorderColor;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+    }
+
+
+    &__button {
+        display: flex;
+        justify-content: center;
+        margin: 0;
+        outline: none;
+
+        &--up {
+            border-radius: 0 5px 5px 0;
+        }
+
+        &--down {
+            border-radius: 5px 0 0 5px;
+        }
+
+        &--up, &--down {
+            padding: 6px 10px;
+        }
     }
 }

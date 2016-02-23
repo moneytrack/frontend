@@ -28,11 +28,12 @@ import createLogger from 'redux-logger'
 import thunkMiddleware from 'redux-thunk'
 import {Provider} from 'react-redux'
 import moment from 'moment'
+import {FastClick} from 'fastclick';
 
 import ajax from './ajax'
 import Root from './components/mobile/Root.jsx'
 import {find} from './arrays'
-import {newState} from './action-creators'
+import {updateState} from './action-creators'
 
 if(window.context.env === "PROD" && window.location.protocol === "http:") {
     window.location.href = window.location.href.replace(/^http/, "https")
@@ -42,8 +43,10 @@ const DISPATCH_URL = window.context.backend_url + "/dispatch"
 
 function restoreState() {
     var item = window.localStorage.getItem("reduxState");
-    if(item == null) {
+    if(item === null) {
         return {
+            "offline": false,
+            "queue": [],
             "history": [],
             "rootCategoryId": null,
             "categoryList": [],
@@ -65,8 +68,22 @@ const initState = restoreState()
 const reducer = (state = initState, action) => {
     const {type, status} = action
     switch(type) {
-        case 'NEW_STATE': {
-            return action.newState
+        case 'UPDATE_STATE': {
+            return Object.assign({}, state, action.newState)
+        }
+
+        case 'ENQUEUE': {
+            const {value} = action
+            return Object.assign({}, state, {
+                queue: state.queue.concat([value])
+            })
+        }
+
+        case 'QUEUE_POP': {
+            const {value} = action
+            return Object.assign({}, state, {
+                queue: state.queue.slice(1)
+            })
         }
 
         case 'WAIT': {
@@ -276,18 +293,49 @@ const reducerWithSave = (state, action) => saveState(reducer(state, action)) // 
 
 const store = applyMiddleware(thunkMiddleware, createLogger())(createStore)(reducerWithSave)
 
-ReactDOM.render(
-    <Provider store={store}>
-        <Root />
-    </Provider>,
-    document.getElementById("react")
-)
+
+window.addEventListener('DOMContentLoaded', () => {
+    FastClick.attach(document.body);
+    ReactDOM.render(
+        <Provider store={store}>
+            <Root />
+        </Provider>,
+        document.getElementById("react")
+    )
+});
+
 
 // Try update initial state
 ajax.get(DISPATCH_URL).then((response) => {
-    store.dispatch(newState({newState:response}))
+    store.dispatch(updateState({newState:response}))
 }, (err) => {
     console.error(err)
     console.error("Failed to load state, use default state");
 })
 
+
+
+// Run process to submit items from queue
+const checkQueue = function(){
+    const DISPATCH_URL = window.context.backend_url + "/dispatch" //todo: move to common place
+
+    const {queue} = store.getState();
+    if(queue.length > 0) {
+        const action = queue[0];
+        ajax.post(DISPATCH_URL, action).then((result) => {
+            store.dispatch(action)
+            store.dispatch({type: 'QUEUE_POP'})
+            checkQueue()
+        }, (err) => {
+            console.log("error", err);
+        })
+
+        console.log("next item", action);
+    }
+    else {
+        setTimeout(checkQueue, 1000)
+    }
+
+};
+
+checkQueue()

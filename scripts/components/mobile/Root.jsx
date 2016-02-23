@@ -7,9 +7,8 @@ import update from 'react-addons-update'
 import InputWithKeyboard from './InputWithKeyboard'
 import Header from './Header'
 import CategoryPicker from './CategoryPicker'
-import DateTimePicker from './DateTimePicker'
-
-
+import DateTimePicker from '../presentational/DateTimePicker'
+import {enqueueNewExpense} from '../../action-creators'
 
 const Root = React.createClass({
 
@@ -20,7 +19,7 @@ const Root = React.createClass({
 
         return {
             amount: "0",
-            date: moment(),
+            date: moment().valueOf(),
             categoryId: firstCategoryId,
             comment: ""
         }
@@ -45,7 +44,12 @@ const Root = React.createClass({
     },
 
     onAdd: function() {
-
+        this.context.store.dispatch(enqueueNewExpense({
+            amount: parseInt(this.state.amount),
+            categoryId: this.state.categoryId,
+            comment: this.state.comment,
+            date: this.state.date,
+        }))
     },
 
     render: function () {
@@ -56,7 +60,7 @@ const Root = React.createClass({
                 <input className="comment" value={this.state.comment} />
                 <CategoryPicker value={this.state.categoryId}/>
                 <DateTimePicker value={this.state.date} />
-                <button className="add-button" onAdd={this.onAdd} >Add</button>
+                <button className="add-button" onClick={this.onAdd} >Add</button>
             </div>
         )
     }

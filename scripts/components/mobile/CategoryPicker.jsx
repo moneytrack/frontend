@@ -14,7 +14,6 @@ const CategoryPicker = React.createClass({
 
 
             const selected = categoryList.filter(x => x.id === this.props.value)[0] || null
-            console.log("cats", categoryList, this.props.value);
             if(selected !== null) {
                 return (
                     <div className="category-picker">
