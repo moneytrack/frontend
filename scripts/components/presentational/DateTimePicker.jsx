@@ -231,7 +231,8 @@ const DateTimePicker = React.createClass({
 
     render: function () {
 
-        const {timestamp, firstDayOfWeek = "SUNDAY"} = this.props
+        const {timestamp, firstDayOfWeek = "SUNDAY"} = this.props //todo: raname 'timestamp' prop to 'value'
+
         return (
             <div className="date-time-picker">
                 <div className="pseudo-input-text" onClick={this.onClick} >
