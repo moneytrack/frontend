@@ -1,6 +1,5 @@
 "use strict"
 import React from 'react'
-import InputMoment from 'input-moment'
 import _moment from 'moment'
 
 import ModalContainer from './ModalContainer'

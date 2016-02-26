@@ -1,7 +1,6 @@
 "use strict"
 import React from 'react'
 import update from 'react-addons-update'
-import InputMoment from 'input-moment'
 import moment from 'moment'
 
 import money from '../../money'

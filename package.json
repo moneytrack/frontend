@@ -33,7 +33,6 @@
   },
   "dependencies": {
     "es6-promise": "^3.0.2",
-    "input-moment": "0.0.6",
     "moment": "^2.11.0",
     "react": "^0.14.3",
     "react-addons-update": "^0.14.3",
