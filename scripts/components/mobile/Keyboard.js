@@ -3,7 +3,7 @@ import React from 'react'
 import moment from 'moment'
 import update from 'react-addons-update'
 
-import {fastClick} from './helpers'
+import Tappable from 'react-tappable';
 
 const Keyboard = React.createClass({
 
@@ -11,30 +11,34 @@ const Keyboard = React.createClass({
         this.props.onInput(key)
     },
 
+    onTap: function(e) {
+        this.props.onInput(e.target.getAttribute('data-value'));
+    },
+
     render: function () {
         return (
-            <div className="keyboard">
+            <Tappable onTap={this.onTap} className="keyboard" component="div">
                 <div className="keyboard__row">
-                    <div className="keyboard__key" ref={fastClick(() => this.onInput(1))} >1</div>
-                    <div className="keyboard__key" ref={fastClick(() => this.onInput(2))} >2</div>
-                    <div className="keyboard__key" ref={fastClick(() => this.onInput(3))} >3</div>
+                    <div className="keyboard__key" data-value="1">1</div>
+                    <div className="keyboard__key" data-value="2">2</div>
+                    <div className="keyboard__key" data-value="3">3</div>
                 </div>
                 <div className="keyboard__row">
-                    <div className="keyboard__key" ref={fastClick(() => this.onInput(4))}>4</div>
-                    <div className="keyboard__key" ref={fastClick(() => this.onInput(5))}>5</div>
-                    <div className="keyboard__key" ref={fastClick(() => this.onInput(6))}>6</div>
+                    <div className="keyboard__key" data-value="4">4</div>
+                    <div className="keyboard__key" data-value="5">5</div>
+                    <div className="keyboard__key" data-value="6">6</div>
                 </div>
                 <div className="keyboard__row">
-                    <div className="keyboard__key" ref={fastClick(() => this.onInput(7))}>7</div>
-                    <div className="keyboard__key" ref={fastClick(() => this.onInput(8))}>8</div>
-                    <div className="keyboard__key" ref={fastClick(() => this.onInput(9))}>9</div>
+                    <div className="keyboard__key" data-value="7">7</div>
+                    <div className="keyboard__key" data-value="8">8</div>
+                    <div className="keyboard__key" data-value="9">9</div>
                 </div>
                 <div className="keyboard__row">
-                    <div className="keyboard__key" ref={fastClick(() => this.onInput('.'))}>.</div>
-                    <div className="keyboard__key" ref={fastClick(() => this.onInput(0))}>0</div>
-                    <div className="keyboard__key" ref={fastClick(() => this.onInput('BACKSPACE'))}>b</div>
+                    <div className="keyboard__key" data-value=".">.</div>
+                    <div className="keyboard__key" data-value="0">0</div>
+                    <div className="keyboard__key" data-value="BACKSPACE">b</div>
                 </div>
-            </div>
+            </Tappable>
         )
     }
 
@@ -42,5 +46,7 @@ const Keyboard = React.createClass({
 
 Keyboard.BACKSPACE = 'BACKSPACE'
 Keyboard.DOT = '.'
+Keyboard.IS_NUMBER = (key) => (key === '0' || key === '1' || key === '2' || key === '3'
+        || key === '4' || key === '5' || key === '6' || key === '7' || key === '8' || key === '9')
 
 export default Keyboard

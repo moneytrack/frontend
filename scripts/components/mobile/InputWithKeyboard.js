@@ -18,7 +18,7 @@ const InputWithKeyboard = React.createClass({
     onKeyboardInput: function(key) {
         var oldValue = this.props.value;
         var value = oldValue
-        if(key.constructor === Number) {
+        if(Keyboard.IS_NUMBER(key)) {
             value = oldValue + key.toString()
         }
         else if(key === Keyboard.BACKSPACE) {
