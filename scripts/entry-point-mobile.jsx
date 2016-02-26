@@ -45,6 +45,7 @@ function restoreState() {
     var item = window.localStorage.getItem("reduxState");
     if(item === null) {
         return {
+            "seq": 0,
             "offline": false,
             "queue": [],
             "history": [],
@@ -72,17 +73,29 @@ const reducer = (state = initState, action) => {
             return Object.assign({}, state, action.newState)
         }
 
-        case 'ENQUEUE': {
-            const {value} = action
+        case 'QUEUE_PUSH': {
+            const {data} = action
+            var newSeq = state.seq + 1;
+            const task = {
+                id: newSeq,
+                data
+            }
             return Object.assign({}, state, {
-                queue: state.queue.concat([value])
+                seq: newSeq,
+                queue: state.queue.concat([task])
             })
         }
 
         case 'QUEUE_POP': {
-            const {value} = action
             return Object.assign({}, state, {
                 queue: state.queue.slice(1)
+            })
+        }
+
+        case 'QUEUE_REMOVE': {
+            const {id} = action
+            return Object.assign({}, state, {
+                queue: state.queue.filter(x => x.id !== id)
             })
         }
 
@@ -282,9 +295,11 @@ const reducer = (state = initState, action) => {
         }
 
         default:
-            console.warn("Unhandled action", action);
-            //todo: log
-            ;
+        {
+            if(action.type !== "@@redux/INIT") {
+                console.warn("Unhandled action", action);
+            }
+        }
     }
     return state
 }
@@ -321,10 +336,11 @@ const checkQueue = function(){
 
     const {queue} = store.getState();
     if(queue.length > 0) {
-        const action = queue[0];
+        var task = queue[0];
+        const action = task.data;
         ajax.post(DISPATCH_URL, action).then((result) => {
             store.dispatch(action)
-            store.dispatch({type: 'QUEUE_POP'})
+            store.dispatch({type: 'QUEUE_REMOVE', id:task.id})
             checkQueue()
         }, (err) => {
             console.log("error", err);

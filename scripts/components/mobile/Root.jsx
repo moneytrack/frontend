@@ -57,7 +57,7 @@ const Root = React.createClass({
 
     onAdd: function() {
         this.context.store.dispatch(enqueueNewExpense({
-            amount: parseInt(this.state.amount),
+            amount: Math.floor(parseFloat(this.state.amount) * 100),
             categoryId: this.state.categoryId,
             comment: this.state.comment,
             date: this.state.date,
@@ -72,7 +72,7 @@ const Root = React.createClass({
                 <input className="comment" value={this.state.comment} onChange={this.onChangeComment}/>
                 <CategoryPicker value={this.state.categoryId} onChange={this.onChangeCategory}/>
                 <DateTimePicker timestamp={this.state.date} onChange={this.onDateChange}/>
-                <button className="add-button" onClick={this.onAdd} >Add</button>
+                <button className="add-button" onClick={this.onAdd} disabled={this.state.amount == "0"}>Add</button>
             </div>
         )
     }

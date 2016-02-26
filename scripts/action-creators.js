@@ -118,8 +118,8 @@ export const setFirstDayOfWeek = ({firstDayOfWeek}) => {
 
 export const enqueueNewExpense = ({amount, categoryId, comment, date}) => {
     return syncDispatch({
-        type: 'ENQUEUE',
-        value: {
+        type: 'QUEUE_PUSH',
+        data: {
             type: 'NEW_EXPENSE',
             id: -1,
             amount,
@@ -128,4 +128,12 @@ export const enqueueNewExpense = ({amount, categoryId, comment, date}) => {
             date
         }
     })
+}
+
+
+export const removeQueueTask = ({id}) => {
+	return syncDispatch({
+		type: 'QUEUE_REMOVE',
+		id
+	})
 }

@@ -94,6 +94,21 @@ button {
     font-size: 1rem;
 }
 
+.queue {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    align-items: stretch;
+
+    &__task {
+        display: flex;
+    }
+
+    &__msg {
+        display: flex;
+        flex: 1;
+    }
+}
 
 
 
@@ -167,6 +182,7 @@ $modalBgColor: rgba(0, 0, 0, 0.72);
             flex: 1;
             justify-content: space-between;
             align-items: stretch;
+            flex-direction: column;
         }
     }
 
