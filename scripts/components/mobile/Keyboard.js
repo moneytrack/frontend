@@ -7,38 +7,34 @@ import Tappable from 'react-tappable';
 
 const Keyboard = React.createClass({
 
-    onInput: function(key) {
-        this.props.onInput(key)
-    },
-
     onTap: function(e) {
-        this.props.onInput(e.target.getAttribute('data-value'));
+        this.props.onInput(e.currentTarget.getAttribute('data-value'));
     },
 
     render: function () {
         return (
-            <Tappable onTap={this.onTap} className="keyboard" component="div">
+            <div className="keyboard" >
                 <div className="keyboard__row">
-                    <div className="keyboard__key" data-value="1">1</div>
-                    <div className="keyboard__key" data-value="2">2</div>
-                    <div className="keyboard__key" data-value="3">3</div>
+                    <Tappable onTap={this.onTap} component="div" className="keyboard__key" data-value="1">1</Tappable>
+                    <Tappable onTap={this.onTap} component="div" className="keyboard__key" data-value="2">2</Tappable>
+                    <Tappable onTap={this.onTap} component="div" className="keyboard__key" data-value="3">3</Tappable>
                 </div>
                 <div className="keyboard__row">
-                    <div className="keyboard__key" data-value="4">4</div>
-                    <div className="keyboard__key" data-value="5">5</div>
-                    <div className="keyboard__key" data-value="6">6</div>
+                    <Tappable onTap={this.onTap} component="div" className="keyboard__key" data-value="4">4</Tappable>
+                    <Tappable onTap={this.onTap} component="div" className="keyboard__key" data-value="5">5</Tappable>
+                    <Tappable onTap={this.onTap} component="div" className="keyboard__key" data-value="6">6</Tappable>
                 </div>
                 <div className="keyboard__row">
-                    <div className="keyboard__key" data-value="7">7</div>
-                    <div className="keyboard__key" data-value="8">8</div>
-                    <div className="keyboard__key" data-value="9">9</div>
+                    <Tappable onTap={this.onTap} component="div" className="keyboard__key" data-value="7">7</Tappable>
+                    <Tappable onTap={this.onTap} component="div" className="keyboard__key" data-value="8">8</Tappable>
+                    <Tappable onTap={this.onTap} component="div" className="keyboard__key" data-value="9">9</Tappable>
                 </div>
                 <div className="keyboard__row">
-                    <div className="keyboard__key" data-value=".">.</div>
-                    <div className="keyboard__key" data-value="0">0</div>
-                    <div className="keyboard__key" data-value="BACKSPACE">b</div>
+                    <Tappable onTap={this.onTap} component="div" className="keyboard__key" data-value=".">.</Tappable>
+                    <Tappable onTap={this.onTap} component="div" className="keyboard__key" data-value="0">0</Tappable>
+                    <Tappable onTap={this.onTap} component="div" className="keyboard__key" data-value="BACKSPACE"><i className="icon icon-arrow_left icon1x"></i></Tappable>
                 </div>
-            </Tappable>
+            </div>
         )
     }
 
