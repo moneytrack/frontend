@@ -344,9 +344,8 @@ const checkQueue = function(){
             checkQueue()
         }, (err) => {
             console.log("error", err);
+            setTimeout(checkQueue, 10000)
         })
-
-        console.log("next item", action);
     }
     else {
         setTimeout(checkQueue, 1000)

@@ -33,31 +33,34 @@ const Header = React.createClass({
         const {queue} = this.context.store.getState();
         return (
             <div className="header">
-                <Tappable component="div" className='header__hamburger' onTap={this.showSystemMenu}><i className="icon icon-reorder icon1x"></i></Tappable>
-                {
-                    (this.state.showSystemMenu)
-                        ? (
-                        <ModalContainer>
-                            <SystemMenu />
-                            <button onClick={this.showSystemMenu}>Close</button>
-                        </ModalContainer>
-                    )
-                    : null
-                }
+                <div className="header__placeholder"></div>
+                <div className="header__body">
+                    <Tappable component="div" className='header__hamburger' onTap={this.showSystemMenu}><i className="icon icon-reorder icon1x"></i></Tappable>
+                    {
+                        (this.state.showSystemMenu)
+                            ? (
+                            <ModalContainer>
+                                <SystemMenu />
+                                <button onClick={this.showSystemMenu}>Close</button>
+                            </ModalContainer>
+                        )
+                            : null
+                    }
 
-                <div onClick={this.showHideQueue} className='header__queue-status'>Queue: {queue.length}</div>
-                {
-                    (this.state.showQueue)
-                    ? (
-                        <ModalContainer>
-                            <Queue/>
-                            <button onClick={this.showHideQueue}>Close</button>
-                        </ModalContainer>
-                      )
-                    : null
-                }
-                <div className='header__separator'></div>
-                <div className='header__net-status'>Online</div>
+                    <div onClick={this.showHideQueue} className='header__queue-status'>Queue: {queue.length}</div>
+                    {
+                        (this.state.showQueue)
+                            ? (
+                            <ModalContainer>
+                                <Queue/>
+                                <button onClick={this.showHideQueue}>Close</button>
+                            </ModalContainer>
+                        )
+                            : null
+                    }
+                    <div className='header__separator'></div>
+                    <div className='header__net-status'>Online</div>
+                </div>
             </div>
         )
     }
