@@ -235,7 +235,7 @@ const DateTimePicker = React.createClass({
         return (
             <div className="date-time-picker">
                 <div className="pseudo-input-text" onClick={this.onClick} >
-                    <i title="Rename..." className="icon icon-calendar icon1x" aria-hidden="true"/> {_moment(timestamp).format("HH:mm DD.MM.YYYY")}
+                    <i title="Change date..." className="icon icon-calendar icon1x" aria-hidden="true"/> {_moment(timestamp).format("HH:mm DD.MM.YYYY")}
                 </div>
                 {  this.state.visible
                    ? <ModalContainer onCancel={this.onCancel}>

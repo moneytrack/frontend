@@ -34,6 +34,21 @@ export default {
         return result;
     },
 
+    formatString: settings => moneyString => {
+        const currency = settings.currency || ""
+        const currencyBefore = settings.currencyBefore || false
+
+        var result
+        if(currencyBefore) {
+            result = currency + moneyString
+        }
+        else {
+            result = moneyString + currency
+        }
+
+        return result;
+    },
+
     settings: {
         byCurrency: {
             USD: {

@@ -5,7 +5,7 @@ import update from 'react-addons-update'
 
 
 import Keyboard from './Keyboard'
-import PseudoInput from './PseudoInput'
+import AmountInput from './AmountInput'
 
 const InputWithKeyboard = React.createClass({
 
@@ -50,8 +50,8 @@ const InputWithKeyboard = React.createClass({
     render: function () {
 
         return (
-            <div className="root">
-                <PseudoInput value={this.props.value}/>
+            <div className="input-with-keyboard">
+                <AmountInput value={this.props.value}/>
                 <Keyboard onInput={this.onKeyboardInput}/>
             </div>
         )

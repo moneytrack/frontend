@@ -1,3 +1,17 @@
+@import 'mfglabs_iconset';
+
+$selectedBgColor: #EEEFAA;
+$linkColor: #006DCE;
+$warningColor: #C70000;
+$inputColor: #5F5F5F;
+$inputBgColor: #FBFBFB;
+$inputBorderColor: #8c8c8c;
+$inputDisabledColor: #5F5F5F;
+$inputWarningBorderColor: #8C0000;
+$inputWarningBgColor: #CA0000;
+$modalBgColor: rgba(0, 0, 0, 0.72);
+
+
 * {
     -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
@@ -9,6 +23,7 @@ html, body {
     flex-direction: column;
     align-items: stretch;
     font-size: 30pt;
+    font-family: 'PT Sans', Helvetica, Arial, sans-serif;
 }
 
 html {
@@ -19,8 +34,21 @@ body {
     flex: 1;
 }
 
+input[type="text"], textarea, .pseudo-input-text, select {
+    -webkit-appearance: none;
+    border-radius: 5px;
+    border: 1px solid $inputBorderColor;
+    padding: 0.3rem 32px 0.3rem 0.5rem;
+    font-size: 0.75rem;
+}
+
+select {
+    background: url('/images/select_bg.png') no-repeat right white;
+}
+
+
 button {
-    font-size: 0.5rem;
+    font-size: 0.75rem;
 }
 
 .icon.fa {
@@ -40,15 +68,21 @@ button {
     flex: 1;
 }
 
+.input-with-keyboard {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    flex: 1;
+}
+
 .amount-input {
     font-size: 1rem;
     text-align: center;
     padding: 0.5rem;
-    border: 1px solid black;
 }
 
 .comment {
-    font-size: 0.5rem;
+    font-size: 0.75rem;
 }
 
 .keyboard {
@@ -61,18 +95,24 @@ button {
     -khtml-user-select: none;    /* Konqueror */
     -moz-user-select: none;      /* Firefox */
     -ms-user-select: none;       /* IE/Edge */
+    border: 1px solid #F3F3F3;
 
     &__row {
         display: flex;
         flex: 1;
         justify-content: space-around;
     }
+
     &__key {
         display: flex;
         flex: 1;
-        border: 1px solid black;
+        border: 1px solid #F3F3F3;
         justify-content: center;
         align-items: center;
+    }
+
+    &__key:active {
+        background: $selectedBgColor;
     }
 }
 
@@ -85,13 +125,35 @@ button {
     }
 
     select {
-        font-size: 0.5rem;
+        font-size: 0.75rem;
     }
 }
 
 .header {
     display: flex;
-    font-size: 1rem;
+    font-size: 0.75rem;
+    align-items: center;
+    justify-content: space-between;
+    background: #000000;
+    padding: 0.1rem 0.25rem;
+
+    &__hamburger {
+        display: flex;
+        padding-right: 0.25rem;
+    }
+
+    &__separator {
+        display: flex;
+        flex: 1;
+    }
+
+    &__queue-status {
+        cursor: pointer;
+    }
+
+    &__net-status, &__queue-status, &__hamburger {
+        color: white;
+    }
 }
 
 .queue {
@@ -111,21 +173,18 @@ button {
 }
 
 
+.system-menu {
+
+    &__item {
+        padding: 0.25rem 0.25rem;
+    }
+
+    &__item:active {
+        background: $selectedBgColor;
+    }
+}
 
 
-
-
-
-$selectedBgColor: #EEEFAA;
-$linkColor: #006DCE;
-$warningColor: #C70000;
-$inputColor: #5F5F5F;
-$inputBgColor: #FBFBFB;
-$inputBorderColor: #E8E8E8;
-$inputDisabledColor: #5F5F5F;
-$inputWarningBorderColor: #8C0000;
-$inputWarningBgColor: #CA0000;
-$modalBgColor: rgba(0, 0, 0, 0.72);
 
 .arrow-up, .arrow-down, .arrow-right, .arrow-left {
     width: 0;
@@ -177,7 +236,6 @@ $modalBgColor: rgba(0, 0, 0, 0.72);
         &__cell {
             background: white;
             border-radius: 4px;
-            padding: 0.5rem;
             display: flex;
             flex: 1;
             justify-content: space-between;

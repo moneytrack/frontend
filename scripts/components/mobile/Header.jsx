@@ -4,13 +4,16 @@ import moment from 'moment'
 import update from 'react-addons-update'
 
 import Queue from './Queue'
+import SystemMenu from './SystemMenu'
 import ModalContainer from '../presentational/ModalContainer'
+import Tappable from 'react-tappable';
 
 const Header = React.createClass({
 
     getInitialState: function() {
         return {
-            showQueue: false
+            showQueue: false,
+            showSystemMenu: false,
         }
     },
 
@@ -20,12 +23,29 @@ const Header = React.createClass({
         })
     },
 
+    showSystemMenu: function() {
+        this.setState({
+            showSystemMenu: !this.state.showSystemMenu
+        })
+    },
+
     render: function () {
         const {queue} = this.context.store.getState();
         return (
             <div className="header">
-                <i className="icon fa fa-bars"></i>
-                <div onClick={this.showHideQueue}>Queue: {queue.length}</div>
+                <Tappable component="div" className='header__hamburger' onTap={this.showSystemMenu}><i className="icon icon-reorder icon1x"></i></Tappable>
+                {
+                    (this.state.showSystemMenu)
+                        ? (
+                        <ModalContainer>
+                            <SystemMenu />
+                            <button onClick={this.showSystemMenu}>Close</button>
+                        </ModalContainer>
+                    )
+                    : null
+                }
+
+                <div onClick={this.showHideQueue} className='header__queue-status'>Queue: {queue.length}</div>
                 {
                     (this.state.showQueue)
                     ? (
@@ -36,6 +56,8 @@ const Header = React.createClass({
                       )
                     : null
                 }
+                <div className='header__separator'></div>
+                <div className='header__net-status'>Online</div>
             </div>
         )
     }

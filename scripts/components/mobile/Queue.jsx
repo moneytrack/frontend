@@ -8,10 +8,8 @@
  */
 "use strict"
 import React from 'react'
-import ModalContainer from '../presentational/ModalContainer'
 
 import {removeQueueTask} from '../../action-creators'
-
 
 const Queue = React.createClass({
 
