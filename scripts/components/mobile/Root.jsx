@@ -63,10 +63,12 @@ const Root = React.createClass({
     },
 
     render: function () {
-        const {unauthorized} = this.context.store.getState()
+        const {unauthorized, userSettings} = this.context.store.getState()
+
         if(unauthorized) {
             window.location = window.context.backend_url + "/login?redirect=" + encodeURIComponent(window.location.href)
         }
+        const {firstDayOfWeek} = userSettings
 
         return (
             <div className="root">
@@ -74,7 +76,7 @@ const Root = React.createClass({
                 <InputWithKeyboard  value={this.state.amount} onChange={this.onAmountChange}/>
                 <input className="comment" type="text" placeholder="Comment" value={this.state.comment} onChange={this.onChangeComment}/>
                 <CategoryPicker value={this.state.categoryId} onChange={this.onChangeCategory}/>
-                <DateTimePicker timestamp={this.state.date} onChange={this.onDateChange}/>
+                <DateTimePicker timestamp={this.state.date} onChange={this.onDateChange} firstDayOfWeek={firstDayOfWeek}/>
                 <button className="add-button" onClick={this.onAdd} disabled={this.state.amount == "0"}>Add</button>
             </div>
         )

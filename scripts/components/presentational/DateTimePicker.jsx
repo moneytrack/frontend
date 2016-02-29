@@ -168,6 +168,9 @@ const DatePicker = React.createClass({
                                             if((date.month() !== now.month())) {
                                                 className += " date-picker__calendar__cell--another-month"
                                             }
+                                            if(date.isoWeekday() == 6 || date.isoWeekday() == 7) {
+                                                className += " date-picker__calendar__cell--weekend"
+                                            }
                                             return (
                                                 <td key={"week_"+week+"_day_" + day}
                                                     onClick={(e) => this.onChange(date.year(), date.month(), date.week(), date.day())}
