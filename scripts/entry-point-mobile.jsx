@@ -33,7 +33,7 @@ import {FastClick} from 'fastclick';
 import ajax from './ajax'
 import Root from './components/mobile/Root.jsx'
 import {find} from './arrays'
-import {updateState} from './action-creators'
+import {updateState,offline,online, unauthorized} from './action-creators'
 
 if(window.context.env === "PROD" && window.location.protocol === "http:") {
     window.location.href = window.location.href.replace(/^http/, "https")
@@ -47,6 +47,7 @@ function restoreState() {
         return {
             "seq": 0,
             "offline": false,
+            "unauthorized": false,
             "queue": [],
             "history": [],
             "rootCategoryId": null,
@@ -71,6 +72,18 @@ const reducer = (state = initState, action) => {
     switch(type) {
         case 'UPDATE_STATE': {
             return Object.assign({}, state, action.newState)
+        }
+
+        case 'OFFLINE': {
+            return Object.assign({}, state, {
+                offline: true
+            })
+        }
+
+        case 'ONLINE': {
+            return Object.assign({}, state, {
+                offline: false
+            })
         }
 
         case 'QUEUE_PUSH': {
@@ -109,8 +122,8 @@ const reducer = (state = initState, action) => {
             return update(state, {waiting: {$set:false} })
         }
 
-        case 'ERROR': {
-            return update(state, {error: {$set:true} })
+        case 'UNAUTHORIZED': {
+            return update(state, {unauthorized: {$set:action.value} })
         }
 
         case 'NEW_EXPENSE': {
@@ -321,13 +334,29 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
 // Try update initial state
+store.dispatch(unauthorized({unauthorized:false}))
 ajax.get(DISPATCH_URL).then((response) => {
     store.dispatch(updateState({newState:response}))
 }, (err) => {
-    console.error(err)
-    console.error("Failed to load state, use default state");
+    if(err.code === 403) {
+        store.dispatch(unauthorized({value:true}))
+    }
+    else {
+        console.error(err)
+        console.error("Failed to load state, use default state");
+    }
 })
 
+// Todo: check in different browswers
+window.addEventListener('online', () => store.dispatch(online()));
+window.addEventListener('offline', () => store.dispatch(offline()));
+var checkOnline = () => {
+    if(window.navigator.onLine) {
+        store.dispatch(online())
+    }
+    setTimeout(checkOnline, 10000)
+};
+checkOnline()
 
 
 // Run process to submit items from queue
@@ -344,7 +373,7 @@ const checkQueue = function(){
             checkQueue()
         }, (err) => {
             console.log("error", err);
-            setTimeout(checkQueue, 10000)
+            setTimeout(checkQueue, 5000)
         })
     }
     else {

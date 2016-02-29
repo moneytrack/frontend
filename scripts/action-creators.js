@@ -130,10 +130,30 @@ export const enqueueNewExpense = ({amount, categoryId, comment, date}) => {
     })
 }
 
-
 export const removeQueueTask = ({id}) => {
 	return syncDispatch({
 		type: 'QUEUE_REMOVE',
 		id
+	})
+}
+
+
+export const offline = () => {
+	return syncDispatch({
+		type: 'OFFLINE'
+	})
+}
+
+export const online = () => {
+	return syncDispatch({
+		type: 'ONLINE'
+	})
+}
+
+
+export const unauthorized = ({value}) => {
+	return syncDispatch({
+		type: 'UNAUTHORIZED',
+		value
 	})
 }

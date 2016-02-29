@@ -30,24 +30,38 @@ const Header = React.createClass({
     },
 
     render: function () {
-        const {queue} = this.context.store.getState();
+        const {queue, offline} = this.context.store.getState();
+
+        /*
+         <Tappable component="div" className='header__hamburger' onTap={this.showSystemMenu}><i className="icon icon-reorder icon1x"></i></Tappable>
+         {
+         (this.state.showSystemMenu)
+         ? (
+         <ModalContainer>
+         <SystemMenu />
+         <button onClick={this.showSystemMenu}>Close</button>
+         </ModalContainer>
+         )
+         : null
+         }
+         */
+
+        var className = "header"
+        if(offline) {
+            className += " header--offline"
+        }
+
         return (
-            <div className="header">
+            <div className={className}>
                 <div className="header__placeholder"></div>
                 <div className="header__body">
-                    <Tappable component="div" className='header__hamburger' onTap={this.showSystemMenu}><i className="icon icon-reorder icon1x"></i></Tappable>
-                    {
-                        (this.state.showSystemMenu)
-                            ? (
-                            <ModalContainer>
-                                <SystemMenu />
-                                <button onClick={this.showSystemMenu}>Close</button>
-                            </ModalContainer>
-                        )
-                            : null
-                    }
-
-                    <div onClick={this.showHideQueue} className='header__queue-status'>Queue: {queue.length}</div>
+                    <div onClick={this.showHideQueue} className='header__queue-status'>
+                        {
+                            (queue.length > 0)
+                            ? <span>Queue: {queue.length}</span>
+                            : <span></span>
+                        }
+                    </div>
                     {
                         (this.state.showQueue)
                             ? (
@@ -59,7 +73,7 @@ const Header = React.createClass({
                             : null
                     }
                     <div className='header__separator'></div>
-                    <div className='header__net-status'>Online</div>
+                    <div className='header__net-status'>{offline ? "Offline" : "Online"}</div>
                 </div>
             </div>
         )

@@ -10,6 +10,7 @@
 import React from 'react'
 
 import {removeQueueTask} from '../../action-creators'
+import money from '../../money'
 
 const Queue = React.createClass({
 
@@ -18,7 +19,10 @@ const Queue = React.createClass({
     },
 
     render: function () {
-        const {queue} = this.context.store.getState()
+        const {queue, userSettings} = this.context.store.getState()
+        const {currency} = userSettings
+        const format = money.format(money.settings.byCurrency[currency]);
+
         return (
             <div className="queue">
                 {
@@ -29,7 +33,7 @@ const Queue = React.createClass({
                             const action = task.data;
                             let msg;
                             if (action.type === "NEW_EXPENSE") {
-                                msg = "Expense: " + action.amount
+                                msg = "Expense: " + format(action.amount)
                             }
                             else {
                                 msg = action.type;
@@ -37,14 +41,13 @@ const Queue = React.createClass({
                             return (
                                 <div key={task.id} className="queue__task">
                                     <span className="queue__msg">{msg}</span>
-                                    <button className="queue__btn" onClick={() => this.onDelete(task.id)}>Delete
-                                    </button>
+                                    <button className="queue__btn" onClick={() => this.onDelete(task.id)}><i className="icon icon-trash_can icon1x"/></button>
                                 </div>
                             )
                         })
                     )
                     : (
-                        <div>Queue is empty</div>
+                        <div className="queue__empty-msg">Queue is empty</div>
                     )
                 }
             </div>

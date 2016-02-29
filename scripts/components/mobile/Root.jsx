@@ -32,9 +32,7 @@ const Root = React.createClass({
 
     componentDidMount: function() {
         this.unsubscribe = this.context.store.subscribe(() => {
-            this.setState(this.createState(), () => {
-                this.forceUpdate()
-            })
+            this.forceUpdate()
         })
     },
 
@@ -65,6 +63,11 @@ const Root = React.createClass({
     },
 
     render: function () {
+        const {unauthorized} = this.context.store.getState()
+        if(unauthorized) {
+            window.location = window.context.backend_url + "/login?redirect=" + encodeURIComponent(window.location.href)
+        }
+
         return (
             <div className="root">
                 <Header/>
