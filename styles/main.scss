@@ -710,9 +710,17 @@ input, textarea, .pseudo-input-text {
                 background: $selectedBgColor;
             }
 
+
             &--another-month {
-                color: #CCCCCC;
+                color: black;
+                opacity: 0.20;
             }
+
+            &--weekend {
+                color: #DC0000;
+            }
+
+
         }
     }
 }

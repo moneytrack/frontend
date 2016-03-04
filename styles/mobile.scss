@@ -10,6 +10,7 @@ $inputDisabledColor: #5F5F5F;
 $inputWarningBorderColor: #8C0000;
 $inputWarningBgColor: #CA0000;
 $modalBgColor: rgba(0, 0, 0, 0.72);
+$buttonBg: #E8E8E8;
 
 
 * {
@@ -321,7 +322,6 @@ button {
         flex: 1;
 
         &__section {
-            border-bottom: 1px dashed #D6D6D6;
             padding: 0rem;
             display: flex;
             flex-direction: row;
@@ -417,7 +417,12 @@ button {
             }
 
             &--another-month {
-                color: #CCCCCC;
+                color: black;
+                opacity: 0.20;
+            }
+
+            &--weekend {
+                color: #DC0000;
             }
         }
     }
@@ -462,6 +467,7 @@ button {
 
 
     &__button {
+        -webkit-appearance: none;
         display: flex;
         justify-content: center;
         margin: 0;
@@ -469,6 +475,8 @@ button {
         flex-basis: 1rem;
         align-items: center;
         text-align: center;
+        background: $buttonBg;
+        border: 1px solid $inputBorderColor;
 
         &--up {
             border-radius: 5px 5px 0 0;
@@ -506,6 +514,9 @@ button {
 
 
     &__button {
+        -webkit-appearance: none;
+        border: 1px solid $inputBorderColor;
+        background: $buttonBg;
         display: flex;
         justify-content: center;
         margin: 0;
