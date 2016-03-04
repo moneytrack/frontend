@@ -60,6 +60,7 @@ const Root = React.createClass({
             comment: this.state.comment,
             date: this.state.date,
         }))
+        this.setState(this.getInitialState())
     },
 
     render: function () {
