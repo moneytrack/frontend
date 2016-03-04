@@ -37,7 +37,7 @@ var gulp = require('gulp'),
     babelPresetReact = require('babel-preset-react'),
     serve = require('gulp-serve'),
     envify = require('gulp-envify'),
-
+    merge = require('merge-stream'),
     packageJson = require('./package.json');
 
 
@@ -94,38 +94,45 @@ gulp.task('scripts_context', function(){
 });
 
 gulp.task('scripts', function(){
-    var bundler = browserify(SRC_ROOT + '/scripts/main.jsx', {
-        debug: false,
-        cache: {},
-        packageCache: {},
-        fullPaths: true,
-        extensions: [".js", ".jsx"]
-    });
+    function makeBundle(entryPoint, dest) {
+        var bundler = browserify(entryPoint, {
+            debug: false,
+            cache: {},
+            packageCache: {},
+            fullPaths: true,
+            extensions: [".js", ".jsx"]
+        });
 
-    function onError(err) {
-        gutil.log(gutil.colors.red(err.message));
+        function onError(err) {
+            gutil.log(gutil.colors.red(err.message));
+        }
+
+        // Register all dependencies as external (they are loaded via vendor bundle)
+        Object.keys(packageJson.dependencies).forEach(function(dep){
+            bundler.external(dep)
+        })
+
+        bundler = bundler.transform(babelify, {
+            global: true,
+            presets: [babelPresetReact, babelPresetEs2015]
+        })
+
+        return bundler.bundle()
+            .on('error',  onError)
+            .pipe(source(dest))
+            .on('error', onError)
+            .pipe(streamify(envify({NODE_ENV: 'production'})))
+            .on('error', onError)
+            .pipe(streamify(uglify()))
+            .on('error', onError)
+            .pipe(gulp.dest(PROD_ROOT + '/scripts'))
+            .on('error', onError)
     }
 
-    // Register all dependencies as external (they are loaded via vendor bundle)
-    Object.keys(packageJson.dependencies).forEach(function(dep){
-        bundler.external(dep)
-    })
-
-    bundler = bundler.transform(babelify, {
-        global: true,
-        presets: [babelPresetReact, babelPresetEs2015]
-    })
-
-    return bundler.bundle()
-        .on('error',  onError)
-        .pipe(source('app.js'))
-        .on('error', onError)
-        .pipe(streamify(envify({NODE_ENV: 'production'})))
-        .on('error', onError)
-        .pipe(streamify(uglify()))
-        .on('error', onError)
-        .pipe(gulp.dest(PROD_ROOT + '/scripts'))
-        .on('error', onError)
+    return merge(
+        makeBundle(SRC_ROOT + '/scripts/entry-point-desktop.jsx', 'desktop.js'),
+        makeBundle(SRC_ROOT + '/scripts/entry-point-mobile.jsx', 'mobile.js')
+    )
 });
 
 gulp.task('styles', function(){
@@ -214,7 +221,7 @@ gulp.task('debug_scripts', function(){
     function makeBundle(entryPoint, output) {
         console.log("Make bundle", entryPoint, output);
 
-        var bundler = browserify(SRC_ROOT + entryPoint, {
+        var bundler = browserify(entryPoint, {
             debug: true,
             cache: {},
             packageCache: {},
@@ -268,8 +275,10 @@ gulp.task('debug_scripts', function(){
         return rebundle();
     }
 
-    makeBundle('/scripts/entry-point-desktop.jsx', 'desktop.js')
-    makeBundle('/scripts/entry-point-mobile.jsx', 'mobile.js')
+    return merge(
+        makeBundle(SRC_ROOT + '/scripts/entry-point-desktop.jsx', 'desktop.js'),
+        makeBundle(SRC_ROOT + '/scripts/entry-point-mobile.jsx', 'mobile.js')
+    )
 });
 
 gulp.task('__debug_styles', function(){
