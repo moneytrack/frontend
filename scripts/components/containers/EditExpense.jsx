@@ -1,6 +1,5 @@
 "use strict"
 import React from 'react'
-import update from 'react-addons-update'
 
 import NumberInput from '../presentational/NumberInput.jsx'
 import CategoryPicker from '../presentational/CategoryPicker.jsx'
@@ -67,27 +66,27 @@ const EditExpense = React.createClass({
 
 
     onAmountChange: function(value) {
-        this.setState(update(this.state, {
-            amount: {$set:value}
-        }))
+        this.setState({
+            amount: value
+        })
     },
 
     onChangeComment: function(e) {
-        this.setState(update(this.state, {
-            comment: {$set:e.target.value}
-        }))
+        this.setState({
+            comment: e.target.value
+        })
     },
 
     onChangeDate: function(date) {
-        this.setState(update(this.state, {
-            date: {$set:date}
-        }))
+        this.setState({
+            date: date
+        })
     },
 
     onChangeCategory: function(categoryId) {
-        this.setState(update(this.state, {
-            categoryId: {$set:categoryId}
-        }))
+        this.setState({
+            categoryId: categoryId
+        })
     },
 
     onNewCategory: function(title, parentId) {

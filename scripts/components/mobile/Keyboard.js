@@ -1,7 +1,6 @@
 "use strict"
 import React from 'react'
 import moment from 'moment'
-import update from 'react-addons-update'
 
 import Tappable from 'react-tappable';
 

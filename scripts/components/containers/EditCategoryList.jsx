@@ -1,7 +1,6 @@
 "use strict"
 import React from 'react'
 import ReactDOM from 'react-dom'
-import update from 'react-addons-update'
 import {find} from '../../arrays'
 import ModalContainer from '../presentational/ModalContainer'
 
@@ -21,32 +20,32 @@ const EditCategoryList = React.createClass({
         Renaming
      */
     onRenameBegin: function(category) {
-        this.setState(update(this.state, {
-            mode: {$set: 'RENAME'},
-            renamingId: {$set: category.id},
-            renamingText: {$set: category.title},
-        }))
+        this.setState({
+            mode: 'RENAME',
+            renamingId: category.id,
+            renamingText: category.title,
+        })
     },
 
     onRenameFinished: function(e) {
         if(this.state.renamingText!=='') {
             this.props.onRenameCategory(this.state.renamingId, this.state.renamingText)
-            this.setState(update(this.state, {
-                mode: {$set: null},
-            }))
+            this.setState({
+                mode: null,
+            })
         }
     },
 
     onRenameCanceled: function(e) {
-        this.setState(update(this.state, {
-            mode: {$set: null},
-        }))
+        this.setState({
+            mode: null,
+        })
     },
 
     onRename: function(e) {
-        this.setState(update(this.state, {
-            renamingText: {$set: e.target.value},
-        }))
+        this.setState({
+            renamingText: e.target.value,
+        })
     },
 
     /*
@@ -54,65 +53,65 @@ const EditCategoryList = React.createClass({
      */
 
     onMoveBegin: function(category) {
-        this.setState(update(this.state, {
-            mode: {$set: 'MOVE'},
-            moveCategoryId: {$set: category.id},
-            moveOldParentId: {$set: category.parentId},
-            moveNewParentId: {$set: category.parentId}
-        }))
+        this.setState({
+            mode:  'MOVE',
+            moveCategoryId: category.id,
+            moveOldParentId: category.parentId,
+            moveNewParentId: category.parentId,
+        })
     },
 
     onMoveFinished: function(e) {
         if(this.state.moveNewParentId !== -1) {
             this.props.onMoveCategory(this.state.moveCategoryId, this.state.moveNewParentId)
-            this.setState(update(this.state, {
-                mode: {$set: null},
-            }))
+            this.setState({
+                mode: null,
+            })
         }
     },
 
     onMoveCanceled: function(e) {
-        this.setState(update(this.state, {
-            mode: {$set: null},
-        }))
+        this.setState({
+            mode: null,
+        })
     },
 
     onMoveParentChange: function(e) {
-        this.setState(update(this.state, {
-            mode: {$set: 'MOVE'},
-            moveNewParentId: {$set: parseInt(e.target.value)}
-        }))
+        this.setState(this.state, {
+            mode: 'MOVE',
+            moveNewParentId: parseInt(e.target.value)
+        })
     },
 
     /*
         New category
      */
     onNewCategoryBegin: function(parent) {
-        this.setState(update(this.state, {
-            mode: {$set: 'NEW_CATEGORY'},
-            newCategoryTitle: {$set: ''},
-            newCategoryParentId:  {$set: parent.id}
-        }))
+        this.setState(this.state, {
+            mode: 'NEW_CATEGORY',
+            newCategoryTitle: '',
+            newCategoryParentId: parent.id,
+        })
     },
 
     onNewCategoryCanceled: function(){
-        this.setState(update(this.state, {
-            mode: {$set: ''},
-        }))
+        this.setState({
+            mode: '',
+        })
     },
 
     onNewCategoryTitleChange: function(e){
-        this.setState(update(this.state, {
-            newCategoryTitle: {$set: e.target.value},
-        }))
+        this.setState({
+            newCategoryTitle: e.target.value,
+        })
     },
 
     onNewCategoryFinished: function(){
         if(this.state.newCategoryTitle !== '') {
             this.props.onNewCategory(this.state.newCategoryTitle, this.state.newCategoryParentId)
-            this.setState(update(this.state, {
-                mode: {$set: ''},
-            }))
+            this.setState({
+                mode: '',
+            })
         }
     },
 
@@ -129,25 +128,25 @@ const EditCategoryList = React.createClass({
             this.props.onDeleteCategory(category.id)
         }
         else {
-            this.setState(update(this.state, {
-                mode: {$set: 'DELETE'},
-                deleteId: {$set: category.id}
-            }))
+            this.setState({
+                mode: 'DELETE',
+                deleteId: category.id
+            })
         }
     },
 
     onDeleteCanceled: function(){
-        this.setState(update(this.state, {
-            mode: {$set: ''},
-        }))
+        this.setState({
+            mode: '',
+        })
     },
 
     onDeleteFinished: function(){
         if(this.state.newCategoryTitle !== '') {
             this.props.onDeleteCategory(this.state.deleteId)
-            this.setState(update(this.state, {
+            this.setState({
                 mode: {$set: ''},
-            }))
+            })
         }
     },
 

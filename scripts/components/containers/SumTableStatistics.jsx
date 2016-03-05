@@ -1,6 +1,5 @@
 "use strict"
 import React from 'react'
-import update from 'react-addons-update'
 import moment from 'moment'
 
 import TabsContainer from '../presentational/TabsContainer'
@@ -48,22 +47,22 @@ const SumTableStatistics = React.createClass({
     },
 
     onChangeChild: function(e){
-        this.setState(update(this.state, {
-            showChild: {$set: !this.state.showChild}
-        }))
+        this.setState({
+            showChild: !this.state.showChild
+        })
     },
 
 
     onChangeShotAtRoot: function(e){
-        this.setState(update(this.state, {
-            showAtRoot: {$set: !this.state.showAtRoot}
-        }))
+        this.setState({
+            showAtRoot: !this.state.showAtRoot
+        })
     },
 
     onChangeShotDif: function(e){
-        this.setState(update(this.state, {
-            showDif: {$set: !this.state.showDif}
-        }))
+        this.setState({
+            showDif: !this.state.showDif
+        })
     },
 
     render: function () {
@@ -243,7 +242,7 @@ const SumTableStatistics = React.createClass({
                            titleList={Object.keys(yearMonthCategoryExpenseMap).sort(asc)}
                            active={(this.state.activeYear || "").toString()}
                            onSwitch={(year) => {
-                                this.setState(update(this.state, {activeYear: {$set: year}}))
+                                this.setState({activeYear: year})
                            }}>
                 {
                     Object.keys(yearMonthCategoryExpenseMap).sort(asc).map(year => {

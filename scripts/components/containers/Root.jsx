@@ -2,7 +2,6 @@
 
 import React from 'react'
 import moment from 'moment'
-import update from 'react-addons-update'
 
 import {newExpense, deleteExpense, newCategory} from '../../action-creators.js'
 
@@ -47,9 +46,9 @@ const Root = React.createClass({
     },
 
     onSwitchTab: function(newActiveTab) {
-        this.setState(update(this.state, {
-            activeTab: {$set: newActiveTab}
-        }))
+        this.setState({
+            activeTab: newActiveTab,
+        })
     },
 
     render: function () {

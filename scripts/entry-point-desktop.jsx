@@ -22,7 +22,6 @@
 import {Promise} from 'es6-promise'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import update from 'react-addons-update'
 import {createStore, applyMiddleware} from 'redux'
 import createLogger from 'redux-logger'
 import thunkMiddleware from 'redux-thunk'
@@ -58,17 +57,17 @@ ajax.get(DISPATCH_URL)
         const {type, status} = action
         switch(type) {
             case 'WAIT': {
-                return update(state, {
-                    waiting: {$set:true},
+                return Object.assign({}, state, {
+                    waiting: true,
                 })
             }
 
             case 'STOP_WAIT': {
-                return update(state, {waiting: {$set:false} })
+                return Object.assign({}, state, {waiting: false })
             }
 
             case 'ERROR': {
-                return update(state, {error: {$set:true} })
+                return Object.assign({}, state, {error: true})
             }
 
             case 'NEW_EXPENSE': {
@@ -80,20 +79,21 @@ ajax.get(DISPATCH_URL)
 
                 const valid = !isNaN(amount) && state.categoryList.filter((x) => x.id === categoryId).length > 0;
                 if(valid) {
-                    return update(state, {
-                        history: {$push: [{
+
+                    return Object.assign({}, state, {
+                        history: state.history.concat([{
                             id,
                             amount,
                             categoryId,
                             comment,
                             date
-                        }]}
+                        }])
                     })
                 }
                 else {
                     console.error("Invalid action", action)
+                    return state;
                 }
-                //todo: handle "failed" case
             }
             break;
 
@@ -113,21 +113,16 @@ ajax.get(DISPATCH_URL)
                     }
                 })
 
-                return update(state, {
-                    history: {$set: newHistory}
+                return Object.assign({}, state, {
+                    history: newHistory,
                 })
-                //todo: handle "failed" case
             }
-            break;
-
 
             case 'DELETE_EXPENSE': {
-                return update(state, {
-                    history: {$set: state.history.filter(expense => expense.id !== action.id)}
+                return Object.assign({}, state,{
+                    history: state.history.filter(expense => expense.id !== action.id),
                 })
-                //todo: handle "failed" case
             }
-            break;
 
             case 'NEW_CATEGORY': {
                 const id = parseFloat(action.id)
@@ -143,8 +138,8 @@ ajax.get(DISPATCH_URL)
 
                 let newCategoryList = state.categoryList.map(category => {
                     if(category.id === parentId) {
-                        return update(category, {
-                            childIdList: {$push: [id]}
+                        return Object.assign({}, category, {
+                            childIdList: category.childIdList.concat([id])
                         })
                     }
                     else {
@@ -153,12 +148,11 @@ ajax.get(DISPATCH_URL)
                 })
                 newCategoryList = newCategoryList.concat([newCategory])
 
-                return update(state, {
-                    categoryList: {$set: newCategoryList},
+                return Object.assign({}, state, {
+                    categoryList: newCategoryList,
                 })
                 //todo: handle "failed" case
             }
-            break;
 
             case 'EDIT_CATEGORY': {
                 const id = parseFloat(action.id)
@@ -170,8 +164,8 @@ ajax.get(DISPATCH_URL)
                 if(title !== null) {
                     newCategoryList = newCategoryList.map(category => {
                         if(category.id === id) {
-                            return update(category, {
-                                title: {$set: title}
+                            return Object.assign({}, category, {
+                                title: title
                             })
                         }
                         else {
@@ -185,20 +179,20 @@ ajax.get(DISPATCH_URL)
                     if (oldParentId !== parentId) {
                         newCategoryList = newCategoryList.map(category => {
                             if (category.id === id) {
-                                return update(category, {
-                                    parentId: {$set: parentId}
+                                return Object.assign({}, category, {
+                                    parentId: parentId
                                 })
                             }
                             if (category.id === oldParentId) {
                                 let newChildIdList = category.childIdList.filter(x => x !== id);
-                                return update(category, {
-                                    childIdList: {$set: newChildIdList}
+                                return Object.assign({}, {
+                                    childIdList: newChildIdList
                                 })
                             }
                             else if (category.id === parentId) {
                                 let newChildIdList = category.childIdList.concat([id]);
-                                return update(category, {
-                                    childIdList: {$set: newChildIdList}
+                                return Object.assign({}, {
+                                    childIdList: newChildIdList
                                 })
                             }
                             return category
@@ -206,12 +200,11 @@ ajax.get(DISPATCH_URL)
                     }
                 }
 
-                return update(state, {
-                    categoryList: {$set: newCategoryList}
+                return Object.assign({}, state,{
+                    categoryList: newCategoryList
                 })
                 //todo: handle "failed" case
             }
-            break;
 
             case 'DELETE_CATEGORY': {
                 const id = action.id
@@ -223,8 +216,8 @@ ajax.get(DISPATCH_URL)
                     .filter(category => category.id !== id)
                     .map(category => {
                         if(category.id === parentId) {
-                            return update(category, {
-                                childIdList: {$set: category.childIdList.filter(x => x !== action.id)}
+                            return Object.assign({}, category, {
+                                childIdList: category.childIdList.filter(x => x !== action.id)
                             })
                         }
                         else {
@@ -232,37 +225,33 @@ ajax.get(DISPATCH_URL)
                         }
                     })
 
-                return update(state, {
-                    categoryList: {$set: newCategoryList},
+                return Object.assign({}, state,{
+                    categoryList: newCategoryList,
                 })
                 //todo: handle "failed" case
             }
-            break;
 
             case 'SET_CURRENCY': {
                 const {currency} = action
-                return update(state, {
+                return Object.assign({}, state,{
                     userSettings: {
-                        currency: {$set: currency}
+                        currency: currency
                     }
                 })
             }
-                break;
 
             case 'SET_FIRST_DAY_OF_WEEK': {
                 const {firstDayOfWeek} = action
-                return update(state, {
+                return Object.assign({}, state,{
                     userSettings: {
-                        firstDayOfWeek: {$set: firstDayOfWeek}
+                        firstDayOfWeek: firstDayOfWeek
                     }
                 })
             }
-            break;
 
             default:
                 console.warn("Unhandled action", action);
                 //todo: log
-            ;
         }
         return state
     }

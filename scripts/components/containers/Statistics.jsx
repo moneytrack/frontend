@@ -1,6 +1,5 @@
 "use strict"
 import React from 'react'
-import update from 'react-addons-update'
 import moment from 'moment'
 
 import SumTableStatistics from './SumTableStatistics'

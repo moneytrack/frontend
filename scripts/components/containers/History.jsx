@@ -1,6 +1,5 @@
 "use strict"
 import React from 'react'
-import update from 'react-addons-update'
 import moment from 'moment'
 
 import ModalContainer from '../presentational/ModalContainer'
@@ -36,29 +35,29 @@ const History = React.createClass({
     },
 
     onExpenseEdit: function(id) {
-        this.setState(update(this.state, {
-            editingExpense: {$set: true},
-            editingExpenseId: {$set: id}
-        }))
+        this.setState({
+            editingExpense: true,
+            editingExpenseId: id,
+        })
     },
 
     onCancelEditingExpense: function() {
-        this.setState(update(this.state, {
-            editingExpense: {$set: false}
-        }))
+        this.setState({
+            editingExpense: false,
+        })
     },
 
     onExpenseSave: function(data) {
         this.context.store.dispatch(editExpense(data));
-        this.setState(update(this.state, {
-            editingExpense: {$set: false},
-        }))
+        this.setState({
+            editingExpense: false,
+        })
     },
 
     onExpenseEditCancel: function() {
-        this.setState(update(this.state, {
-            editingExpense: {$set: false},
-        }))
+        this.setState({
+            editingExpense: false,
+        })
     },
 
     onFilterByYearMonth: function(year, month) {
@@ -69,11 +68,11 @@ const History = React.createClass({
         m.endOf('month')
         const to = m.valueOf();
 
-        this.setState(update(this.state, {
-            filterDateFrom: {$set: from},
-            filterDateTo: {$set: to},
-            filterDateItem: {$set: year + "-" + month}
-        }))
+        this.setState( {
+            filterDateFrom: from,
+            filterDateTo:  to,
+            filterDateItem:  year + "-" + month
+        })
     },
 
     onFilterByYear: function(year) {
@@ -84,24 +83,24 @@ const History = React.createClass({
         m.endOf('year')
         const to = m.valueOf();
 
-        this.setState(update(this.state, {
-            filterDateFrom: {$set: from},
-            filterDateTo: {$set: to},
-            filterDateItem: {$set: year}
-        }))
+        this.setState({
+            filterDateFrom: from,
+            filterDateTo: to,
+            filterDateItem: year,
+        })
     },
 
     onFilterByCategory: function(category) {
-        this.setState(update(this.state, {
-            filterCategory: {$set: category}
-        }))
+        this.setState({
+            filterCategory: category
+        })
     },
 
 
     onFilterByComment: function(e) {
-        this.setState(update(this.state, {
-            filterComment: {$set: e.target.value}
-        }))
+        this.setState({
+            filterComment: e.target.value,
+        })
     },
 
 

@@ -1,6 +1,5 @@
 "use strict"
 import React from 'react'
-import update from 'react-addons-update'
 import TabsContainer from '../presentational/TabsContainer'
 import UserSettings from './UserSettings'
 import EditCategoryList from './EditCategoryList'
@@ -43,9 +42,9 @@ const Settings = React.createClass({
     },
 
     onSwitch: function(newActive) {
-        this.setState(update(this.state, {
-            "active": {$set: newActive}
-        }))
+        this.setState({
+            "active": newActive
+        })
     },
 
     render: function () {
